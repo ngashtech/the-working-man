@@ -1,0 +1,57 @@
+<!-- templates/employer/profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Profile - The Working Man</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { font-family: 'Source Sans Pro', sans-serif; background: #ecf0f5; padding-top: 70px; }
+        .navbar { background: #3c8dbc; border: none; }
+        .navbar-brand { color: white !important; font-weight: bold; }
+        .navbar-nav > li > a { color: white !important; }
+        .box { background: white; border-top: 3px solid #3c8dbc; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; max-width: 700px; margin: 0 auto; }
+        .box-header { padding: 15px; border-bottom: 1px solid #f4f4f4; }
+        .box-body { padding: 20px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/employer/dashboard"><i class="fa fa-hard-hat"></i> THE WORKING MAN</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/employer/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h2><i class="fa fa-user"></i> My Profile</h2>
+    <hr>
+
+    <div class="box">
+        <div class="box-header"><h3 class="box-title">Personal Information</h3></div>
+        <div class="box-body">
+            <table class="table table-bordered">
+                <tr><td><strong>Full Name</strong></td><td>{{ user.full_name }}</td></tr>
+                <tr><td><strong>Email</strong></td><td>{{ user.email }}</td></tr>
+                <tr><td><strong>Phone</strong></td><td>{{ user.phone }}</td></tr>
+                <tr><td><strong>Company</strong></td><td>{{ employer.company_name or 'N/A' }}</td></tr>
+                <tr><td><strong>Address</strong></td><td>{{ employer.address or 'N/A' }}</td></tr>
+                <tr><td><strong>City</strong></td><td>{{ employer.city or 'N/A' }}</td></tr>
+            </table>
+            <a href="/employer/profile/edit" class="btn btn-primary"><i class="fa fa-edit"></i> Edit Profile</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

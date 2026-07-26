@@ -1,0 +1,579 @@
+<!-- templates/worker/register.html -->
+{% extends "base.html" %}
+
+{% block title %}Register as Worker - The Working Man{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 0;
+    }
+    
+    .register-header {
+        text-align: center;
+        color: white;
+        margin-bottom: 30px;
+    }
+    .register-header h1 { font-size: 2.5em; font-weight: 700; margin-bottom: 10px; }
+    .register-header p { font-size: 1.1em; opacity: 0.9; }
+    
+    .benefits-banner {
+        display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;
+    }
+    .benefit-badge {
+        background: rgba(255,255,255,0.2); color: white; padding: 10px 20px;
+        border-radius: 25px; font-size: 14px; white-space: nowrap;
+    }
+    .benefit-badge i { margin-right: 8px; }
+    
+    .form-card {
+        background: white; border-radius: 15px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        padding: 40px; max-width: 800px; margin: 0 auto;
+    }
+    
+    .form-section { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+    .form-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    
+    .section-title { display: flex; align-items: center; margin-bottom: 20px; }
+    .section-icon {
+        width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center;
+        justify-content: center; font-size: 22px; color: white; margin-right: 15px; flex-shrink: 0;
+    }
+    .icon-account { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .icon-service { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    .icon-location { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    .icon-verify { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    
+    .section-title h3 { margin: 0; font-weight: 700; color: #2c3e50; }
+    .section-title small { display: block; color: #999; }
+    
+    .form-group { margin-bottom: 20px; }
+    .form-group label { font-weight: 600; color: #333; margin-bottom: 5px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group label .required { color: #e74c3c; }
+    
+    .form-control { border-radius: 8px; border: 2px solid #e0e0e0; padding: 12px 15px; height: auto; font-size: 15px; }
+    .form-control:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); outline: none; }
+    
+    .input-group-addon { background: #f5f5f5; border: 2px solid #e0e0e0; border-right: none; border-radius: 8px 0 0 8px; color: #777; font-weight: bold; min-width: 45px; }
+    .input-group .form-control { border-radius: 0 8px 8px 0; }
+    
+    .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+    .checkbox-card {
+        display: flex; align-items: center; padding: 10px 12px; border: 2px solid #e0e0e0;
+        border-radius: 8px; cursor: pointer; transition: all 0.3s; font-weight: normal; margin: 0; font-size: 13px;
+    }
+    .checkbox-card:hover { border-color: #667eea; background: #f8f9ff; }
+    .checkbox-card input { margin-right: 8px; }
+    .checkbox-card.checked { border-color: #667eea; background: #f0f0ff; }
+    
+    .file-upload { position: relative; }
+    .file-upload input[type="file"] { display: none; }
+    .file-upload label {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: 25px 15px; border: 2px dashed #ccc; border-radius: 10px; cursor: pointer;
+        text-align: center; transition: all 0.3s; font-weight: normal; margin-bottom: 10px;
+    }
+    .file-upload label:hover { border-color: #667eea; background: #f8f9ff; }
+    .file-upload label i { font-size: 2.5em; color: #667eea; margin-bottom: 10px; }
+    .file-upload label span { font-weight: bold; }
+    .file-upload label small { color: #999; }
+    .file-preview { text-align: center; margin-top: 10px; display: none; }
+    .file-preview img { max-width: 200px; border-radius: 8px; border: 2px solid #e0e0e0; }
+    
+    .btn-submit {
+        width: 100%; padding: 16px; font-size: 18px; font-weight: 700; border-radius: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white; cursor: pointer;
+        transition: all 0.3s; margin-top: 20px;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
+    
+    .login-link { text-align: center; margin-top: 25px; color: white; }
+    .login-link a { color: #ffd700; font-weight: bold; text-decoration: underline; }
+    
+    .password-strength { margin-top: 8px; }
+    .password-strength .progress { height: 5px; border-radius: 3px; margin-bottom: 3px; }
+    
+    .terms-section { background: #f8f9ff; padding: 20px; border-radius: 10px; border: 1px solid #e0e0ff; margin-top: 15px; }
+    
+    .flash-container { position: fixed; top: 70px; right: 20px; z-index: 9999; max-width: 350px; }
+    .alert { border-radius: 5px; padding: 10px 15px; margin-bottom: 8px; box-shadow: 0 3px 15px rgba(0,0,0,0.15); animation: slideIn 0.3s; border: none; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    
+    @media (max-width: 768px) {
+        .form-card { padding: 20px; }
+        .register-header h1 { font-size: 1.8em; }
+        .checkbox-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="register-container">
+    <div class="container">
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <i class="fa fa-{{ 'check-circle' if category=='success' else 'exclamation-circle' }}"></i> {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Header -->
+        <div class="register-header">
+            <h1><i class="fa fa-briefcase"></i> Register as Worker</h1>
+            <p>Create your profile and start getting matched with jobs in your area</p>
+        </div>
+        
+        <!-- Benefits -->
+        <div class="benefits-banner">
+            <span class="benefit-badge"><i class="fa fa-check-circle"></i> Free Registration</span>
+            <span class="benefit-badge"><i class="fa fa-star"></i> Get Rated & Reviewed</span>
+            <span class="benefit-badge"><i class="fa fa-magic"></i> Smart Job Matching</span>
+            <span class="benefit-badge"><i class="fa fa-globe"></i> Local Jobs Near You</span>
+            <span class="benefit-badge"><i class="fa fa-money"></i> Set Your Own Rates</span>
+        </div>
+        
+        <!-- Form -->
+        <div class="form-card">
+            <form method="POST" action="{{ url_for('register_worker') }}" enctype="multipart/form-data" onsubmit="return validateWorkerForm()">
+                
+                <!-- ==================== SECTION 1: ACCOUNT INFO ==================== -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon icon-account"><i class="fa fa-user-circle"></i></div>
+                        <div>
+                            <h3>Account Information</h3>
+                            <small>Basic details to create your account</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Full Name <span class="required">*</span></label>
+                                <input type="text" name="full_name" id="fullName" class="form-control" 
+                                       placeholder="Enter your full name as it appears on your ID" 
+                                       value="{{ request.form.get('full_name', '') }}"
+                                       required minlength="3" maxlength="100">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Email Address <span class="required">*</span></label>
+                                <input type="email" name="email" id="email" class="form-control" 
+                                       placeholder="your@email.com" 
+                                       value="{{ request.form.get('email', '') }}"
+                                       required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Phone Number <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">+254</span>
+                                    <input type="tel" name="phone" id="phone" class="form-control" 
+                                           placeholder="712345678" 
+                                           value="{{ request.form.get('phone', '') }}"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Password <span class="required">*</span></label>
+                                <input type="password" name="password" id="password" class="form-control" 
+                                       placeholder="Create a strong password" required minlength="8">
+                                <div class="password-strength" id="passwordStrength" style="display:none;">
+                                    <div class="progress">
+                                        <div class="progress-bar" id="strengthBar" style="width:0%;"></div>
+                                    </div>
+                                    <small id="strengthText"></small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Confirm Password <span class="required">*</span></label>
+                                <input type="password" name="confirm_password" id="confirmPassword" class="form-control" 
+                                       placeholder="Confirm your password" required minlength="8">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ==================== SECTION 2: SERVICE DETAILS ==================== -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon icon-service"><i class="fa fa-briefcase"></i></div>
+                        <div>
+                            <h3>Service Details</h3>
+                            <small>Tell employers about your skills and rates</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Service Type <span class="required">*</span></label>
+                                <select name="service_type" id="serviceType" class="form-control" required>
+                                    <option value="">-- Select Your Service --</option>
+                                    <option value="house_help">🏠 House Help</option>
+                                    <option value="cleaner">🧹 Cleaner</option>
+                                    <option value="plumber">🔧 Plumber</option>
+                                    <option value="electrician">⚡ Electrician</option>
+                                    <option value="gardener">🌿 Gardener</option>
+                                    <option value="painter">🎨 Painter</option>
+                                    <option value="carpenter">🪚 Carpenter</option>
+                                    <option value="mason">🧱 Mason</option>
+                                    <option value="welder">🔥 Welder</option>
+                                    <option value="mechanic">🔩 Mechanic</option>
+                                    <option value="driver">🚗 Driver</option>
+                                    <option value="security_guard">🛡️ Security Guard</option>
+                                    <option value="other">📋 Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Years of Experience</label>
+                                <input type="number" name="experience_years" id="experienceYears" class="form-control" 
+                                       min="0" max="50" value="0">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Expected Pay Rate <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="number" name="expected_pay_rate" id="payRate" class="form-control" 
+                                           step="0.01" min="0.01" max="10000" placeholder="0.00" required>
+                                    <span class="input-group-addon">
+                                        <select name="pay_period" style="border:none; background:transparent; padding:5px;">
+                                            <option value="hourly">/hr</option>
+                                            <option value="daily">/day</option>
+                                            <option value="weekly">/wk</option>
+                                            <option value="monthly">/mo</option>
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>About You (Bio)</label>
+                                <textarea name="bio" id="bio" class="form-control" rows="3" maxlength="500"
+                                          placeholder="Tell employers about your experience, skills, and what makes you a great worker..."></textarea>
+                                <small class="text-muted"><span id="bioCount">0</span>/500 characters</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ==================== SECTION 3: LOCATION ==================== -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon icon-location"><i class="fa fa-globe"></i></div>
+                        <div>
+                            <h3>Your Location <span class="required">*</span></h3>
+                            <small>Select your country and county - you'll be matched with jobs in your region</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Country <span class="required">*</span></label>
+                                <select name="country" id="regCountry" class="form-control" required onchange="loadCounties()">
+                                    <option value="">-- Select Country --</option>
+                                    <option value="Kenya">🇰🇪 Kenya</option>
+                                    <option value="Uganda">🇺🇬 Uganda</option>
+                                    <option value="Tanzania">🇹🇿 Tanzania</option>
+                                    <option value="Rwanda">🇷🇼 Rwanda</option>
+                                    <option value="Burundi">🇧🇮 Burundi</option>
+                                    <option value="South Sudan">🇸🇸 South Sudan</option>
+                                    <option value="Ethiopia">🇪🇹 Ethiopia</option>
+                                    <option value="Somalia">🇸🇴 Somalia</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>County/Region <span class="required">*</span></label>
+                                <select name="county" id="regCounty" class="form-control" required onchange="loadCities()">
+                                    <option value="">-- Select County --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>City/Town</label>
+                                <input type="text" name="city" id="city" class="form-control" placeholder="e.g., Westlands">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Work Locations -->
+                    <div class="form-group" id="localLocationsDiv" style="display:none; margin-top:15px;">
+                        <label>Preferred Work Areas <span class="required">*</span> (Select all that apply)</label>
+                        <div class="checkbox-grid" id="localLocations"></div>
+                    </div>
+                </div>
+                
+                <!-- ==================== SECTION 4: VERIFICATION ==================== -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon icon-verify"><i class="fa fa-id-card"></i></div>
+                        <div>
+                            <h3>Identity Verification (Optional but Recommended)</h3>
+                            <small>Verified workers get 10x more job offers!</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>ID Type</label>
+                                <select name="id_type" class="form-control">
+                                    <option value="national_id">National ID</option>
+                                    <option value="passport">Passport</option>
+                                    <option value="driver_license">Driver's License</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>ID Number</label>
+                                <input type="text" name="id_number" class="form-control" placeholder="Enter your ID number">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Upload ID Document</label>
+                                <div class="file-upload">
+                                    <input type="file" name="id_document" id="idDocument" accept="image/*,.pdf" onchange="previewFile(this, 'idPreview')">
+                                    <label for="idDocument">
+                                        <i class="fa fa-cloud-upload"></i>
+                                        <span>Click to upload ID</span>
+                                        <small>JPG, PNG, or PDF (max 5MB)</small>
+                                    </label>
+                                    <div class="file-preview" id="idPreview"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Upload Recent Selfie</label>
+                                <div class="file-upload">
+                                    <input type="file" name="selfie" id="selfie" accept="image/*" onchange="previewFile(this, 'selfiePreview')">
+                                    <label for="selfie">
+                                        <i class="fa fa-camera"></i>
+                                        <span>Click to upload selfie</span>
+                                        <small>Clear face photo (JPG/PNG, max 5MB)</small>
+                                    </label>
+                                    <div class="file-preview" id="selfiePreview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Terms -->
+                <div class="terms-section">
+                    <label style="font-weight:normal; margin:0; display:flex; align-items:center;">
+                        <input type="checkbox" name="terms_agreed" id="termsAgreed" required style="margin-right:10px;">
+                        <span>I agree to the <a href="{{ url_for('terms_of_service') }}" target="_blank">Terms of Service</a> and <a href="{{ url_for('privacy_policy') }}" target="_blank">Privacy Policy</a> <span class="required">*</span></span>
+                    </label>
+                </div>
+                
+                <!-- Submit -->
+                <button type="submit" class="btn-submit">
+                    <i class="fa fa-user-plus"></i> Create My Worker Account
+                </button>
+                
+            </form>
+        </div>
+        
+        <!-- Login Link -->
+        <div class="login-link">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Log in here</a></p>
+            <p style="margin-top:5px;">Want to hire instead? <a href="{{ url_for('register_employer') }}">Register as Employer</a></p>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Kenya locations data
+var kenyaCounties = {
+    'Nairobi': ['Westlands', 'Kilimani', 'Karen', 'Eastlands', 'Parklands', 'Lavington', 'Kileleshwa', 'Runda', 'Langata', 'Downtown', 'South B', 'South C', 'Ngong Road', 'Thika Road'],
+    'Mombasa': ['Nyali', 'Bamburi', 'Kizingo', 'Shanzu', 'Mtwapa', 'Diani', 'Likoni', 'Changamwe'],
+    'Kisumu': ['Milimani', 'Kondele', 'Nyalenda', 'Mamboleo', 'Riat Hills', 'Kanyakwar'],
+    'Nakuru': ['Milimani', 'Section 58', 'Lanet', 'Njoro', 'Gilgil', 'Naivasha'],
+    'Kiambu': ['Thika', 'Ruiru', 'Kiambu Town', 'Kikuyu', 'Limuru', 'Juja'],
+    'Uasin Gishu': ['Eldoret Town', 'Langas', 'Huruma', 'Elgon View', 'Kimumu'],
+};
+
+// ==================== PASSWORD STRENGTH ====================
+$('#password').on('input', function() {
+    var pass = $(this).val();
+    var strength = 0;
+    if (pass.length >= 8) strength += 25;
+    if (pass.match(/[a-z]+/)) strength += 25;
+    if (pass.match(/[A-Z]+/)) strength += 25;
+    if (pass.match(/[0-9]+/)) strength += 25;
+    
+    $('#passwordStrength').show();
+    $('#strengthBar').css('width', strength + '%');
+    
+    if (strength <= 25) {
+        $('#strengthBar').css('background-color', '#e74c3c');
+        $('#strengthText').text('Weak - Add uppercase & numbers').css('color', '#e74c3c');
+    } else if (strength <= 50) {
+        $('#strengthBar').css('background-color', '#f39c12');
+        $('#strengthText').text('Fair - Keep going').css('color', '#f39c12');
+    } else if (strength <= 75) {
+        $('#strengthBar').css('background-color', '#2ecc71');
+        $('#strengthText').text('Good').css('color', '#2ecc71');
+    } else {
+        $('#strengthBar').css('background-color', '#27ae60');
+        $('#strengthText').text('Strong!').css('color', '#27ae60');
+    }
+});
+
+// ==================== BIO COUNTER ====================
+$('#bio').on('input', function() {
+    $('#bioCount').text($(this).val().length);
+});
+
+// ==================== CHECKBOX VISUAL ====================
+$(document).on('change', '.checkbox-card input', function() {
+    $(this).parent().toggleClass('checked', $(this).is(':checked'));
+});
+
+// ==================== LOAD COUNTIES ====================
+function loadCounties() {
+    var country = $('#regCountry').val();
+    var countySelect = $('#regCounty');
+    countySelect.html('<option value="">-- Select County --</option>');
+    
+    if (country === 'Kenya') {
+        Object.keys(kenyaCounties).forEach(function(c) {
+            countySelect.append('<option value="' + c + '">' + c + '</option>');
+        });
+    } else {
+        countySelect.append('<option value="Other">Other Region</option>');
+    }
+    $('#localLocationsDiv').hide();
+}
+
+// ==================== LOAD CITIES ====================
+function loadCities() {
+    var county = $('#regCounty').val();
+    var div = $('#localLocationsDiv');
+    var grid = $('#localLocations');
+    
+    if (county && kenyaCounties[county]) {
+        div.show();
+        grid.empty();
+        kenyaCounties[county].forEach(function(loc) {
+            grid.append(
+                '<label class="checkbox-card">' +
+                '<input type="checkbox" name="preferred_locations" value="' + loc + '"> ' +
+                '<i class="fa fa-map-pin"></i> ' + loc +
+                '</label>'
+            );
+        });
+    } else {
+        div.hide();
+    }
+}
+
+// ==================== FILE PREVIEW ====================
+function previewFile(input, previewId) {
+    var preview = $('#' + previewId);
+    var file = input.files[0];
+    if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File too large. Maximum size is 5MB.');
+            input.value = '';
+            preview.hide();
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            preview.html('<img src="' + e.target.result + '" alt="Preview">').show();
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.hide();
+    }
+}
+
+// ==================== FORM VALIDATION ====================
+function validateWorkerForm() {
+    var errors = [];
+    
+    if ($('#fullName').val().trim().length < 3) {
+        errors.push('Full name must be at least 3 characters.');
+    }
+    if ($('#email').val().indexOf('@') === -1) {
+        errors.push('Please enter a valid email address.');
+    }
+    if ($('#phone').val().trim() === '') {
+        errors.push('Phone number is required.');
+    }
+    if ($('#password').val().length < 8) {
+        errors.push('Password must be at least 8 characters.');
+    }
+    if ($('#password').val() !== $('#confirmPassword').val()) {
+        errors.push('Passwords do not match.');
+    }
+    if ($('#serviceType').val() === '') {
+        errors.push('Please select a service type.');
+    }
+    if ($('#payRate').val() === '' || parseFloat($('#payRate').val()) <= 0) {
+        errors.push('Please enter a valid pay rate.');
+    }
+    if ($('#regCountry').val() === '') {
+        errors.push('Please select your country.');
+    }
+    if ($('#regCounty').val() === '') {
+        errors.push('Please select your county/region.');
+    }
+    if ($('input[name="preferred_locations"]:checked').length === 0) {
+        errors.push('Please select at least one work area.');
+    }
+    if (!$('#termsAgreed').is(':checked')) {
+        errors.push('Please agree to the Terms of Service and Privacy Policy.');
+    }
+    
+    if (errors.length > 0) {
+        alert('Please fix the following:\n\n• ' + errors.join('\n• '));
+        return false;
+    }
+    return true;
+}
+</script>
+{% endblock %}

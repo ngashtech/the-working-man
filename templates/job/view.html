@@ -1,0 +1,77 @@
+<!-- templates/job/view.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Job - The Working Man</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { font-family: 'Source Sans Pro', sans-serif; background: #ecf0f5; padding-top: 70px; }
+        .navbar { background: #3c8dbc; border: none; }
+        .navbar-brand { color: white !important; font-weight: bold; }
+        .navbar-nav > li > a { color: white !important; }
+        .box { background: white; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/"><i class="fa fa-hard-hat"></i> THE WORKING MAN</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="box">
+        <h2>{{ job.title }}</h2>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Service:</strong> {{ job.service_type_needed.replace('_', ' ').title() }}</p>
+                <p><strong>Location:</strong> {{ job.location_name }}</p>
+                <p><strong>Rate:</strong> ${{ "%.2f"|format(job.offered_pay_rate) }}/{{ job.pay_period }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Status:</strong> 
+                    <span class="label label-{{ 'success' if job.is_active else 'default' }}">
+                        {{ 'Active' if job.is_active else 'Closed' }}
+                    </span>
+                </p>
+                <p><strong>Posted:</strong> {{ job.created_at.strftime('%B %d, %Y') }}</p>
+            </div>
+        </div>
+        <h4>Description</h4>
+        <p>{{ job.description }}</p>
+    </div>
+
+    {% if matches %}
+    <div class="box">
+        <h3>Matched Workers</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>Worker</th><th>Score</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+            {% for match in matches %}
+            <tr>
+                <td>{{ match.worker.user.full_name }}</td>
+                <td>{{ match.match_score }}%</td>
+                <td><span class="label label-info">{{ match.status.title() }}</span></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <a href="javascript:history.back()" class="btn btn-default"><i class="fa fa-arrow-left"></i> Back</a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

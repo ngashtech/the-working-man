@@ -1,0 +1,247 @@
+<!-- templates/services.html -->
+{% extends "base.html" %}
+
+{% block title %}Services - The Working Man{% endblock %}
+
+{% block extra_css %}
+<style>
+    .services-hero {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+        padding: 60px 0;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .services-hero h1 { font-size: 2.5em; font-weight: 700; margin-bottom: 10px; }
+    .services-hero p { font-size: 1.1em; opacity: 0.9; }
+    .search-bar { max-width: 600px; margin: 20px auto 0; }
+    .search-bar .input-group { box-shadow: 0 5px 20px rgba(0,0,0,0.2); border-radius: 30px; overflow: hidden; }
+    .search-bar .form-control { height: 50px; border: none; padding-left: 20px; font-size: 16px; }
+    .search-bar .btn { height: 50px; padding: 0 25px; background: #f39c12; border: none; color: white; font-weight: bold; }
+    
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
+    .service-card {
+        background: white; border-radius: 12px; padding: 30px 20px; text-align: center;
+        cursor: pointer; transition: all 0.3s ease; border: 3px solid transparent;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: relative; overflow: hidden;
+    }
+    .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-color: #3c8dbc; }
+    .service-card.active { border-color: #3c8dbc; background: #f0f8ff; }
+    .service-card .service-icon {
+        width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center;
+        justify-content: center; margin: 0 auto 15px; font-size: 30px; color: white;
+    }
+    .service-card h4 { margin: 0 0 5px; font-weight: 600; color: #333; }
+    .service-card p { margin: 0; font-size: 13px; color: #777; }
+    .service-card .worker-count { display: inline-block; background: #f0f8ff; color: #3c8dbc; padding: 3px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin-top: 10px; }
+    .service-card .badge-popular { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; }
+    
+    .icon-house { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .icon-cleaner { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    .icon-plumber { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .icon-electrician { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+    .icon-gardener { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+    .icon-painter { background: linear-gradient(135deg, #fa709a, #fee140); }
+    .icon-carpenter { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+    .icon-security { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .icon-driver { background: linear-gradient(135deg, #89f7fe, #66a6ff); }
+    
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+    .section-header h2 { margin: 0; color: #2c3e50; font-weight: 700; }
+    .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; }
+    .filter-bar select { padding: 8px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+    
+    .workers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .worker-card { background: white; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); overflow: hidden; transition: all 0.3s; cursor: pointer; }
+    .worker-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+    .worker-card-header { padding: 25px 20px; text-align: center; background: #f8f9fa; position: relative; }
+    .worker-avatar { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 35px; color: white; background: #3c8dbc; overflow: hidden; }
+    .worker-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .verified-badge { position: absolute; top: 15px; right: 15px; background: #00a65a; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .worker-name { font-size: 18px; font-weight: 600; margin: 0 0 5px; color: #333; }
+    .worker-service { color: #3c8dbc; font-weight: 500; margin: 0 0 5px; }
+    .worker-rating { color: #f39c12; }
+    .worker-rating span { color: #777; margin-left: 5px; }
+    .worker-card-body { padding: 20px; }
+    .worker-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; }
+    .worker-info i { color: #3c8dbc; }
+    .worker-locations { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+    .location-tag { background: #f0f8ff; color: #3c8dbc; padding: 3px 10px; border-radius: 15px; font-size: 11px; font-weight: 500; }
+    .worker-card-footer { padding: 15px 20px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+    .worker-card-footer .btn { flex: 1; font-size: 13px; }
+    .empty-state { text-align: center; padding: 80px 20px; background: white; border-radius: 12px; }
+    .empty-state i { font-size: 5em; color: #ddd; margin-bottom: 20px; }
+    
+    @media (max-width: 768px) {
+        .services-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .service-card { padding: 20px 15px; }
+        .workers-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="services-hero">
+    <div class="container">
+        <h1><i class="fa fa-tools"></i> Our Services</h1>
+        <p>Browse all available services and find the perfect worker for your needs</p>
+        <div class="search-bar">
+            <div class="input-group">
+                <input type="text" id="workerSearch" class="form-control" placeholder="Search workers by name or location...">
+                <span class="input-group-btn">
+                    <button class="btn" onclick="filterWorkers()"><i class="fa fa-search"></i> Search</button>
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <h3 style="margin-bottom:20px; color:#2c3e50;"><i class="fa fa-th-large"></i> Select a Service</h3>
+    <div class="services-grid" id="servicesGrid"></div>
+    
+    <div class="workers-section">
+        <div class="section-header">
+            <h2 id="sectionTitle"><i class="fa fa-users"></i> Available Workers</h2>
+            <div class="filter-bar">
+                <select id="locationFilter" onchange="filterWorkers()"><option value="">All Locations</option></select>
+                <select id="ratingFilter" onchange="filterWorkers()"><option value="">All Ratings</option><option value="4">4+ Stars</option><option value="3">3+ Stars</option></select>
+                <select id="sortBy" onchange="filterWorkers()"><option value="rating">Sort by Rating</option><option value="experience">Sort by Experience</option></select>
+            </div>
+        </div>
+        <p class="results-count" id="resultsCount"></p>
+        <div class="workers-grid" id="workersGrid"></div>
+        <div class="empty-state" id="emptyState" style="display:none;"><i class="fa fa-user-times"></i><h3>No workers found</h3><p>Try selecting a different service or adjusting filters.</p></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var allWorkers = [];
+var currentService = 'all';
+var filteredWorkers = [];
+var services = [
+    { id: 'house_help', name: 'House Help', icon: 'fa-home', colorClass: 'icon-house', description: 'Domestic workers', popular: true },
+    { id: 'cleaner', name: 'Cleaner', icon: 'fa-tint', colorClass: 'icon-cleaner', description: 'Professional cleaning', popular: false },
+    { id: 'plumber', name: 'Plumber', icon: 'fa-wrench', colorClass: 'icon-plumber', description: 'Plumbing repairs', popular: true },
+    { id: 'electrician', name: 'Electrician', icon: 'fa-bolt', colorClass: 'icon-electrician', description: 'Electrical work', popular: false },
+    { id: 'gardener', name: 'Gardener', icon: 'fa-leaf', colorClass: 'icon-gardener', description: 'Garden maintenance', popular: false },
+    { id: 'painter', name: 'Painter', icon: 'fa-paint-brush', colorClass: 'icon-painter', description: 'Painting services', popular: false },
+    { id: 'carpenter', name: 'Carpenter', icon: 'fa-gear', colorClass: 'icon-carpenter', description: 'Woodwork & furniture', popular: false },
+    { id: 'security_guard', name: 'Security Guard', icon: 'fa-shield', colorClass: 'icon-security', description: 'Security personnel', popular: false },
+    { id: 'driver', name: 'Driver', icon: 'fa-car', colorClass: 'icon-driver', description: 'Driving services', popular: false },
+    { id: 'mason', name: 'Mason', icon: 'fa-building', colorClass: 'icon-house', description: 'Construction work', popular: false },
+    { id: 'welder', name: 'Welder', icon: 'fa-fire', colorClass: 'icon-plumber', description: 'Metal fabrication', popular: false },
+    { id: 'mechanic', name: 'Mechanic', icon: 'fa-wrench', colorClass: 'icon-cleaner', description: 'Vehicle repair', popular: false }
+];
+
+$(document).ready(function() {
+    loadServices();
+    loadWorkersFromAPI();
+    var urlParams = new URLSearchParams(window.location.search);
+    var serviceParam = urlParams.get('service');
+    if (serviceParam) { selectService(serviceParam); }
+    $('#workerSearch').on('input', filterWorkers);
+});
+
+function loadServices() {
+    var grid = $('#servicesGrid');
+    grid.append('<div class="service-card active" onclick="selectService(\'all\')" id="serviceCard-all"><div class="service-icon" style="background:linear-gradient(135deg,#667eea,#764ba2);"><i class="fa fa-globe"></i></div><h4>All Services</h4><p>Browse all workers</p><span class="worker-count" id="count-all">0 workers</span></div>');
+    services.forEach(function(s) {
+        grid.append('<div class="service-card" onclick="selectService(\'' + s.id + '\')" id="serviceCard-' + s.id + '">' + (s.popular ? '<span class="badge-popular">Popular</span>' : '') + '<div class="service-icon ' + s.colorClass + '"><i class="fa ' + s.icon + '"></i></div><h4>' + s.name + '</h4><p>' + s.description + '</p><span class="worker-count" id="count-' + s.id + '">0 workers</span></div>');
+    });
+}
+
+function loadWorkersFromAPI() {
+    $.ajax({
+        url: '/api/workers?limit=200',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success && response.workers) {
+                allWorkers = response.workers;
+                updateWorkerCounts();
+                filterWorkers();
+                loadLocationFilter();
+            }
+        },
+        error: function() {
+            $('#workersGrid').html('<div class="empty-state"><i class="fa fa-exclamation-circle"></i><h4>Failed to load workers</h4><p>Please ensure the server is running and database is seeded.</p></div>');
+        }
+    });
+}
+
+function loadLocationFilter() {
+    var locations = new Set();
+    allWorkers.forEach(function(w) { if (w.locations) w.locations.forEach(function(l) { locations.add(l); }); });
+    var select = $('#locationFilter');
+    select.empty().append('<option value="">All Locations</option>');
+    locations.forEach(function(l) { select.append('<option value="' + l + '">' + l + '</option>'); });
+}
+
+function selectService(serviceId) {
+    currentService = serviceId;
+    $('.service-card').removeClass('active');
+    $('#serviceCard-' + serviceId).addClass('active');
+    if (serviceId === 'all') {
+        $('#sectionTitle').html('<i class="fa fa-users"></i> All Available Workers');
+    } else {
+        var s = services.find(function(x) { return x.id === serviceId; });
+        if (s) $('#sectionTitle').html('<i class="fa ' + s.icon + '"></i> ' + s.name + 's Available');
+    }
+    $('html, body').animate({ scrollTop: $('#workersGrid').offset().top - 100 }, 500);
+    filterWorkers();
+}
+
+function filterWorkers() {
+    var locationFilter = $('#locationFilter').val();
+    var ratingFilter = $('#ratingFilter').val();
+    var sortBy = $('#sortBy').val();
+    var searchQuery = $('#workerSearch').val().toLowerCase();
+    
+    if (currentService === 'all') {
+        filteredWorkers = allWorkers.slice();
+    } else {
+        filteredWorkers = allWorkers.filter(function(w) { return w.service_type === currentService; });
+    }
+    
+    if (locationFilter) filteredWorkers = filteredWorkers.filter(function(w) { return w.locations && w.locations.indexOf(locationFilter) !== -1; });
+    if (ratingFilter) filteredWorkers = filteredWorkers.filter(function(w) { return parseFloat(w.rating_average) >= parseFloat(ratingFilter); });
+    if (searchQuery) filteredWorkers = filteredWorkers.filter(function(w) { return w.full_name.toLowerCase().indexOf(searchQuery) !== -1 || (w.locations && w.locations.some(function(l) { return l.toLowerCase().indexOf(searchQuery) !== -1; })); });
+    
+    if (sortBy === 'rating') filteredWorkers.sort(function(a, b) { return parseFloat(b.rating_average) - parseFloat(a.rating_average); });
+    else filteredWorkers.sort(function(a, b) { return b.experience_years - a.experience_years; });
+    
+    $('#resultsCount').text('Showing ' + filteredWorkers.length + ' worker(s) from database');
+    renderWorkers();
+}
+
+function renderWorkers() {
+    var grid = $('#workersGrid');
+    grid.empty();
+    if (filteredWorkers.length === 0) { grid.hide(); $('#emptyState').show(); return; }
+    grid.show(); $('#emptyState').hide();
+    
+    filteredWorkers.forEach(function(w) {
+        var stars = '';
+        for (var i = 1; i <= 5; i++) stars += '<i class="fa fa-star' + (i <= parseFloat(w.rating_average) ? '' : '-o') + '"></i>';
+        var locHtml = '';
+        if (w.locations) w.locations.slice(0, 3).forEach(function(l) { locHtml += '<span class="location-tag"><i class="fa fa-map-marker"></i> ' + l + '</span>'; });
+        var avatar = w.selfie_path ? '<img src="/static/uploads/' + w.selfie_path + '" alt="' + w.full_name + '">' : '<i class="fa fa-user"></i>';
+        
+        grid.append('<div class="worker-card" onclick="window.location.href=\'/messages/' + w.user_id + '\'"><div class="worker-card-header">' + (w.id_verified ? '<div class="verified-badge"><i class="fa fa-check"></i></div>' : '') + '<div class="worker-avatar">' + avatar + '</div><h4 class="worker-name">' + w.full_name + '</h4><p class="worker-service">' + w.service_name + '</p><div class="worker-rating">' + stars + ' <span>' + parseFloat(w.rating_average).toFixed(1) + ' (' + w.total_reviews + ')</span></div></div><div class="worker-card-body"><div class="worker-info"><span><i class="fa fa-briefcase"></i> Exp:</span><span class="value">' + w.experience_years + ' years</span></div><div class="worker-info"><span><i class="fa fa-money"></i> Rate:</span><span class="value">$' + parseFloat(w.expected_pay_rate).toFixed(2) + '/' + w.pay_period + '</span></div><div class="worker-locations">' + locHtml + '</div></div><div class="worker-card-footer"><a href="/messages/' + w.user_id + '" class="btn btn-primary btn-sm"><i class="fa fa-envelope"></i> Contact</a></div></div>');
+    });
+}
+
+function updateWorkerCounts() {
+    $('#count-all').text(allWorkers.length + ' workers');
+    services.forEach(function(s) {
+        var count = allWorkers.filter(function(w) { return w.service_type === s.id; }).length;
+        $('#count-' + s.id).text(count + ' worker' + (count !== 1 ? 's' : ''));
+    });
+}
+</script>
+{% endblock %}

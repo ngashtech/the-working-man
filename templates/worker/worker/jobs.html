@@ -1,0 +1,135 @@
+<!-- templates/worker/jobs.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Jobs - The Working Man</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { font-family: 'Source Sans Pro', sans-serif; background: #ecf0f5; padding-top: 70px; }
+        .navbar { background: #3c8dbc; border: none; }
+        .navbar-brand { color: white !important; font-weight: bold; }
+        .navbar-nav > li > a { color: white !important; }
+        .box { background: white; border-top: 3px solid #3c8dbc; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .box-header { padding: 15px; border-bottom: 1px solid #f4f4f4; }
+        .box-body { padding: 15px; }
+        .label { padding: 5px 10px; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+        .empty-state i { font-size: 60px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/worker/dashboard"><i class="fa fa-hard-hat"></i> THE WORKING MAN</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/worker/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h2><i class="fa fa-briefcase"></i> My Jobs & Matches</h2>
+    <hr>
+
+    <!-- My Matches -->
+    <div class="box">
+        <div class="box-header"><h3 class="box-title">My Matches</h3></div>
+        <div class="box-body">
+            {% if matches %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Employer</th>
+                            <th>Location</th>
+                            <th>Rate</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for match in matches %}
+                    <tr>
+                        <td>{{ match.job.title[:30] }}...</td>
+                        <td>{{ match.job.employer.full_name }}</td>
+                        <td>{{ match.job.location_name }}</td>
+                        <td>${{ "%.2f"|format(match.job.offered_pay_rate) }}/{{ match.job.pay_period }}</td>
+                        <td>
+                            <span class="label label-{{ 'success' if match.status == 'hired' else 'info' if match.status == 'suggested' else 'warning' }}">
+                                {{ match.status.title() }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/job/{{ match.job_posting_id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fa fa-inbox"></i>
+                <h3>No matches yet</h3>
+                <p>Complete your profile to start receiving job matches</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Available Jobs -->
+    <div class="box">
+        <div class="box-header"><h3 class="box-title">Available Jobs</h3></div>
+        <div class="box-body">
+            {% if available_jobs %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Employer</th>
+                            <th>Location</th>
+                            <th>Rate</th>
+                            <th>Posted</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for job in available_jobs %}
+                    <tr>
+                        <td>{{ job.title[:30] }}...</td>
+                        <td>{{ job.employer.full_name }}</td>
+                        <td>{{ job.location_name }}</td>
+                        <td>${{ "%.2f"|format(job.offered_pay_rate) }}/{{ job.pay_period }}</td>
+                        <td>{{ job.created_at.strftime('%b %d') }}</td>
+                        <td>
+                            <a href="/job/{{ job.id }}" class="btn btn-xs btn-primary"><i class="fa fa-eye"></i> View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fa fa-search"></i>
+                <h3>No available jobs</h3>
+                <p>Check back later for new job postings</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

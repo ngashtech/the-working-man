@@ -1,0 +1,545 @@
+<!-- templates/auth/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - The Working Man</title>
+    
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e40af 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 40px 30px 30px;
+            text-align: center;
+        }
+        
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 35px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .login-logo i {
+            color: #fbbf24;
+        }
+        
+        .login-header h2 {
+            margin: 0 0 5px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .login-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .login-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group label i {
+            color: #3b82f6;
+            margin-right: 5px;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-group .form-control {
+            padding-right: 45px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+            color: #374151;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background: white;
+        }
+        
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 1px;
+            top: 1px;
+            bottom: 1px;
+            width: 40px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: #9ca3af;
+            border-radius: 0 8px 8px 0;
+            transition: color 0.3s;
+        }
+        
+        .password-toggle:hover {
+            color: #3b82f6;
+        }
+        
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 13px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .checkbox-label input {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            accent-color: #3b82f6;
+        }
+        
+        .forgot-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .forgot-link:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
+        .btn-login i {
+            margin-right: 8px;
+        }
+        
+        .login-footer {
+            text-align: center;
+            padding: 20px 30px;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .login-footer p {
+            margin: 0 0 15px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .register-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn-register {
+            padding: 10px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            color: #374151;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .btn-register:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+        
+        .btn-register i {
+            margin-right: 5px;
+            color: #3b82f6;
+        }
+        
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-home a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .back-home a:hover {
+            color: white;
+        }
+        
+        .back-home i {
+            margin-right: 5px;
+        }
+        
+        /* Flash Messages */
+        .flash-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 350px;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease-out;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert i {
+            font-size: 18px;
+        }
+        
+        .alert-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .alert-error, .alert-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .alert-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .alert-info {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .alert .close {
+            color: white;
+            opacity: 0.8;
+            font-size: 18px;
+            margin-left: auto;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0 5px;
+        }
+        
+        .alert .close:hover {
+            opacity: 1;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 10px;
+            }
+            
+            .login-header {
+                padding: 30px 20px 20px;
+            }
+            
+            .login-body {
+                padding: 20px;
+            }
+            
+            .login-logo {
+                width: 60px;
+                height: 60px;
+                font-size: 25px;
+            }
+            
+            .login-header h2 {
+                font-size: 20px;
+            }
+            
+            .register-links {
+                flex-direction: column;
+            }
+            
+            .btn-register {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Flash Messages -->
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible">
+                    <i class="fa fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' if category in ['error', 'danger'] else 'exclamation-triangle' if category == 'warning' else 'info-circle' }}"></i>
+                    <span>{{ message }}</span>
+                    <button type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            
+            <!-- Login Header -->
+            <div class="login-header">
+                <div class="login-logo">
+                    <i class="fa fa-hard-hat"></i>
+                </div>
+                <h2>Welcome Back!</h2>
+                <p>Log in to your The Working Man account</p>
+            </div>
+            
+            <!-- Login Form -->
+            <div class="login-body">
+                <form method="POST" action="{{ url_for('login') }}">
+                    
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fa fa-envelope"></i> Email Address
+                        </label>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               class="form-control" 
+                               placeholder="Enter your email address"
+                               value="{{ request.form.get('email', '') }}"
+                               required 
+                               autocomplete="email"
+                               autofocus>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fa fa-lock"></i> Password
+                        </label>
+                        <div class="input-group">
+                            <input type="password" 
+                                   id="password" 
+                                   name="password" 
+                                   class="form-control" 
+                                   placeholder="Enter your password"
+                                   required>
+                            <button type="button" class="password-toggle" onclick="togglePassword()" tabindex="-1">
+                                <i class="fa fa-eye" id="toggleIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="{{ url_for('forgot_password') }}" class="forgot-link">
+                            Forgot Password?
+                        </a>
+                    </div>
+                    
+                    <button type="submit" class="btn-login">
+                        <i class="fa fa-sign-in"></i> Log In
+                    </button>
+                    
+                </form>
+            </div>
+            
+            <!-- Login Footer -->
+            <div class="login-footer">
+                <p>Don't have an account?</p>
+                <div class="register-links">
+                    <a href="{{ url_for('register_worker') }}" class="btn-register">
+                        <i class="fa fa-briefcase"></i> Join as Worker
+                    </a>
+                    <a href="{{ url_for('register_employer') }}" class="btn-register">
+                        <i class="fa fa-building"></i> Hire Workers
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Back to Home -->
+        <div class="back-home">
+            <a href="{{ url_for('index') }}">
+                <i class="fa fa-arrow-left"></i> Back to Homepage
+            </a>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            var passwordInput = document.getElementById('password');
+            var toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+        
+        // Auto-dismiss flash messages after 5 seconds
+        $(document).ready(function() {
+            setTimeout(function() {
+                $('.alert').fadeOut('slow', function() {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+        
+        // Close alert on button click
+        function closeAlert(button) {
+            var alert = button.parentElement;
+            alert.style.animation = 'slideOut 0.3s ease-out forwards';
+            setTimeout(function() {
+                alert.remove();
+            }, 300);
+        }
+    </script>
+    
+    <style>
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+</body>
+</html>

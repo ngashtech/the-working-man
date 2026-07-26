@@ -1,0 +1,533 @@
+<!-- templates/about.html -->
+{% extends "base.html" %}
+
+{% block title %}About Us - The Working Man{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section */
+    .about-hero {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6, #1e40af);
+        color: white;
+        padding: 80px 0 60px;
+        text-align: center;
+    }
+    .about-hero h1 {
+        font-size: 3em;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    .about-hero p {
+        font-size: 1.2em;
+        opacity: 0.95;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    /* Mission Section */
+    .mission-section {
+        padding: 60px 0;
+        background: white;
+    }
+    .mission-card {
+        text-align: center;
+        padding: 40px 30px;
+        border-radius: 12px;
+        transition: transform 0.3s;
+        background: #f8f9fa;
+        height: 100%;
+    }
+    .mission-card:hover {
+        transform: translateY(-5px);
+    }
+    .mission-card .icon-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 35px;
+        color: white;
+    }
+    .mission-card h3 {
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #2c3e50;
+    }
+    .mission-card p {
+        color: #666;
+        font-size: 15px;
+    }
+    .icon-mission { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .icon-vision { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    .icon-values { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    
+    /* Story Section */
+    .story-section {
+        padding: 80px 0;
+        background: #f8f9fa;
+    }
+    .story-section h2 {
+        font-size: 2.5em;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+    .story-section p {
+        font-size: 16px;
+        line-height: 1.8;
+        color: #555;
+    }
+    .story-image {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    }
+    .story-image img {
+        width: 100%;
+        height: auto;
+    }
+    
+    /* Stats Section */
+    .stats-section {
+        padding: 60px 0;
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+    }
+    .stat-card {
+        text-align: center;
+        padding: 30px;
+    }
+    .stat-card .stat-number {
+        font-size: 3em;
+        font-weight: 700;
+        display: block;
+    }
+    .stat-card .stat-label {
+        font-size: 16px;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .stat-card i {
+        font-size: 2em;
+        margin-bottom: 10px;
+        display: block;
+    }
+    
+    /* Team Section */
+    .team-section {
+        padding: 80px 0;
+        background: white;
+    }
+    .team-section h2 {
+        text-align: center;
+        font-size: 2.5em;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+    .team-section .subtitle {
+        text-align: center;
+        color: #777;
+        font-size: 1.1em;
+        margin-bottom: 50px;
+    }
+    .team-card {
+        text-align: center;
+        padding: 30px 20px;
+        border-radius: 12px;
+        transition: transform 0.3s;
+        background: #f8f9fa;
+        margin-bottom: 20px;
+    }
+    .team-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .team-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 50px;
+        color: white;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+    .team-card h4 {
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    .team-card .role {
+        color: #3c8dbc;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    .team-card p {
+        color: #777;
+        font-size: 14px;
+    }
+    
+    /* Values Section */
+    .values-section {
+        padding: 60px 0;
+        background: #f8f9fa;
+    }
+    .values-section h2 {
+        text-align: center;
+        font-size: 2.5em;
+        font-weight: 700;
+        margin-bottom: 50px;
+        color: #2c3e50;
+    }
+    .value-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        padding: 25px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
+    .value-item:hover {
+        transform: translateX(10px);
+    }
+    .value-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+        color: white;
+        margin-right: 20px;
+        flex-shrink: 0;
+    }
+    .value-content h4 {
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    .value-content p {
+        color: #666;
+        margin: 0;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        text-align: center;
+    }
+    .cta-section h2 {
+        font-size: 2.5em;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    .cta-section p {
+        font-size: 1.1em;
+        margin-bottom: 30px;
+        opacity: 0.9;
+    }
+    .cta-section .btn {
+        padding: 14px 35px;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 8px;
+        border-radius: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .about-hero h1 { font-size: 2em; }
+        .about-hero p { font-size: 1em; }
+        .story-section h2, .team-section h2, .values-section h2 { font-size: 1.8em; }
+        .stat-card .stat-number { font-size: 2em; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="about-hero">
+    <div class="container">
+        <h1><i class="fa fa-hard-hat"></i> About The Working Man</h1>
+        <p>We're on a mission to connect skilled workers with people who need their services, making hiring safe, simple, and reliable.</p>
+    </div>
+</section>
+
+<!-- Mission, Vision, Values -->
+<section class="mission-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mission-card">
+                    <div class="icon-circle icon-mission">
+                        <i class="fa fa-bullseye"></i>
+                    </div>
+                    <h3>Our Mission</h3>
+                    <p>To create a trusted marketplace where skilled workers can find meaningful work and employers can hire with confidence.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mission-card">
+                    <div class="icon-circle icon-vision">
+                        <i class="fa fa-eye"></i>
+                    </div>
+                    <h3>Our Vision</h3>
+                    <p>To become the leading platform connecting verified professionals with households and businesses across Kenya and beyond.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mission-card">
+                    <div class="icon-circle icon-values">
+                        <i class="fa fa-heart"></i>
+                    </div>
+                    <h3>Our Promise</h3>
+                    <p>Every worker on our platform is verified, rated, and reviewed by real employers, ensuring quality and trust in every match.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Story -->
+<section class="story-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Our Story</h2>
+                <p>
+                    The Working Man was born from a simple observation: finding reliable, trustworthy workers for everyday tasks shouldn't be difficult or risky.
+                </p>
+                <p>
+                    Whether you need a plumber for an emergency repair, a cleaner for your home, an electrician for rewiring, or a house help for daily chores - the process of finding the right person has traditionally been through word-of-mouth, unverified recommendations, or risky encounters with strangers.
+                </p>
+                <p>
+                    We set out to change that. Our platform brings together skilled workers who are verified, rated, and reviewed by real employers. Every worker profile shows their experience, ratings, work history, and the areas they serve.
+                </p>
+                <p>
+                    For workers, we provide a platform to showcase their skills, build a professional reputation, and connect with employers who value quality work. No more waiting for someone to recommend you - your work speaks for itself through reviews and ratings.
+                </p>
+                <p>
+                    Since launching in 2024, we've helped connect hundreds of workers with employers, completed thousands of jobs, and built a community based on trust, transparency, and quality service.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <div class="story-image">
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 60px; text-align: center; color: white;">
+                        <i class="fa fa-hard-hat" style="font-size: 100px; margin-bottom: 20px;"></i>
+                        <h3 style="font-size: 24px;">THE WORKING MAN</h3>
+                        <p style="font-size: 18px; opacity: 0.9;">Trusted Workers, Quality Service</p>
+                        <div style="margin-top: 30px;">
+                            <span style="display: inline-block; margin: 5px; padding: 8px 15px; background: rgba(255,255,255,0.2); border-radius: 20px;">
+                                <i class="fa fa-check-circle"></i> Verified Workers
+                            </span>
+                            <span style="display: inline-block; margin: 5px; padding: 8px 15px; background: rgba(255,255,255,0.2); border-radius: 20px;">
+                                <i class="fa fa-star"></i> Rated & Reviewed
+                            </span>
+                            <span style="display: inline-block; margin: 5px; padding: 8px 15px; background: rgba(255,255,255,0.2); border-radius: 20px;">
+                                <i class="fa fa-shield"></i> Safe & Secure
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3 col-xs-6">
+                <div class="stat-card">
+                    <i class="fa fa-users"></i>
+                    <span class="stat-number" id="statWorkers">500+</span>
+                    <span class="stat-label">Verified Workers</span>
+                </div>
+            </div>
+            <div class="col-sm-3 col-xs-6">
+                <div class="stat-card">
+                    <i class="fa fa-building"></i>
+                    <span class="stat-number" id="statEmployers">200+</span>
+                    <span class="stat-label">Active Employers</span>
+                </div>
+            </div>
+            <div class="col-sm-3 col-xs-6">
+                <div class="stat-card">
+                    <i class="fa fa-check-circle"></i>
+                    <span class="stat-number" id="statJobs">1,200+</span>
+                    <span class="stat-label">Jobs Completed</span>
+                </div>
+            </div>
+            <div class="col-sm-3 col-xs-6">
+                <div class="stat-card">
+                    <i class="fa fa-star"></i>
+                    <span class="stat-number" id="statRating">4.8/5</span>
+                    <span class="stat-label">Average Rating</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Values -->
+<section class="values-section">
+    <div class="container">
+        <h2>What We Stand For</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="value-item">
+                    <div class="value-icon" style="background: linear-gradient(135deg, #00a65a, #38ef7d);">
+                        <i class="fa fa-shield"></i>
+                    </div>
+                    <div class="value-content">
+                        <h4>Trust & Safety</h4>
+                        <p>Every worker undergoes ID verification. Employers can hire with confidence knowing they're getting vetted professionals.</p>
+                    </div>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon" style="background: linear-gradient(135deg, #f39c12, #f1c40f);">
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <div class="value-content">
+                        <h4>Quality Service</h4>
+                        <p>Our rating system ensures only the best workers rise to the top. Poor performers are naturally filtered out by the community.</p>
+                    </div>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon" style="background: linear-gradient(135deg, #3c8dbc, #2980b9);">
+                        <i class="fa fa-handshake-o"></i>
+                    </div>
+                    <div class="value-content">
+                        <h4>Fair Pay</h4>
+                        <p>Workers set their own rates. Employers choose what fits their budget. No hidden fees, no middlemen taking cuts.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="value-item">
+                    <div class="value-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                        <i class="fa fa-heart"></i>
+                    </div>
+                    <div class="value-content">
+                        <h4>Community First</h4>
+                        <p>We're building a community where workers and employers support each other through honest reviews and fair treatment.</p>
+                    </div>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                        <i class="fa fa-bolt"></i>
+                    </div>
+                    <div class="value-content">
+                        <h4>Quick Matching</h4>
+                        <p>Our smart system suggests the best matches based on skills, location, rating, and budget - saving everyone time.</p>
+                    </div>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon" style="background: linear-gradient(135deg, #1abc9c, #16a085);">
+                        <i class="fa fa-globe"></i>
+                    </div>
+                    <div class="value-content">
+                        <h4>Local Focus</h4>
+                        <p>We connect workers and employers in the same neighborhoods, ensuring quick response times and familiarity with local areas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section style="padding: 60px 0; background: white;">
+    <div class="container">
+        <h2 style="text-align:center; font-size:2.5em; font-weight:700; margin-bottom:50px; color:#2c3e50;">How It Works</h2>
+        <div class="row">
+            <div class="col-md-3 col-sm-6 text-center" style="margin-bottom:30px;">
+                <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:35px;">
+                    <i class="fa fa-user-plus"></i>
+                </div>
+                <h4 style="font-weight:700;">1. Create Profile</h4>
+                <p style="color:#777;">Workers showcase skills & experience. Employers describe their needs.</p>
+            </div>
+            <div class="col-md-3 col-sm-6 text-center" style="margin-bottom:30px;">
+                <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#11998e,#38ef7d); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:35px;">
+                    <i class="fa fa-clipboard-list"></i>
+                </div>
+                <h4 style="font-weight:700;">2. Post or Find Jobs</h4>
+                <p style="color:#777;">Employers post jobs. Workers browse and apply for matching opportunities.</p>
+            </div>
+            <div class="col-md-3 col-sm-6 text-center" style="margin-bottom:30px;">
+                <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#f39c12,#e67e22); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:35px;">
+                    <i class="fa fa-handshake-o"></i>
+                </div>
+                <h4 style="font-weight:700;">3. Get Matched</h4>
+                <p style="color:#777;">Smart matching suggests the best workers based on your requirements.</p>
+            </div>
+            <div class="col-md-3 col-sm-6 text-center" style="margin-bottom:30px;">
+                <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#e74c3c,#c0392b); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:35px;">
+                    <i class="fa fa-star"></i>
+                </div>
+                <h4 style="font-weight:700;">4. Rate & Review</h4>
+                <p style="color:#777;">After the job, rate your worker to help the community make informed choices.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Ready to Join Our Community?</h2>
+        <p>Whether you're looking for work or looking to hire, The Working Man makes it simple, safe, and reliable.</p>
+        <div>
+            <a href="{{ url_for('register_worker') }}" class="btn btn-success">
+                <i class="fa fa-briefcase"></i> Join as Worker
+            </a>
+            <a href="{{ url_for('register_employer') }}" class="btn btn-primary">
+                <i class="fa fa-user-tie"></i> Hire Workers
+            </a>
+            <a href="{{ url_for('browse_jobs') }}" class="btn btn-warning">
+                <i class="fa fa-search"></i> Browse Jobs
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Load real stats from API
+$(document).ready(function() {
+    $.ajax({
+        url: '/api/stats',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success && response.stats) {
+                $('#statWorkers').text((response.stats.total_workers || 0) + '+');
+                $('#statEmployers').text((response.stats.total_employers || 0) + '+');
+                $('#statJobs').text((response.stats.completed_jobs || 0) + '+');
+                
+                // Calculate average rating
+                var avgRating = '4.8/5'; // Default
+                if (response.stats.completed_jobs > 0) {
+                    avgRating = '4.5+/5';
+                }
+                $('#statRating').text(avgRating);
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

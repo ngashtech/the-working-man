@@ -1,0 +1,63 @@
+<!-- templates/job/matches.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Matches - The Working Man</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { font-family: 'Source Sans Pro', sans-serif; background: #ecf0f5; padding-top: 70px; }
+        .navbar { background: #3c8dbc; border: none; }
+        .navbar-brand { color: white !important; font-weight: bold; }
+        .box { background: white; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/employer/dashboard"><i class="fa fa-hard-hat"></i> THE WORKING MAN</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h2><i class="fa fa-handshake-o"></i> Matches for: {{ job.title }}</h2>
+    <hr>
+    
+    {% if matches %}
+    <div class="box">
+        <table class="table table-striped">
+            <thead>
+                <tr><th>Worker</th><th>Match Score</th><th>Status</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+            {% for match in matches %}
+            <tr>
+                <td>{{ match.worker.user.full_name }}</td>
+                <td>{{ match.match_score }}%</td>
+                <td>{{ match.status.title() }}</td>
+                <td>
+                    {% if match.status == 'suggested' %}
+                    <a href="/match/{{ match.id }}/status/contacted" class="btn btn-xs btn-primary">Contact</a>
+                    {% elif match.status == 'contacted' %}
+                    <a href="/match/{{ match.id }}/status/hired" class="btn btn-xs btn-success">Hire</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-center text-muted">No matches yet.</p>
+    {% endif %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!-- templates/admin/dashboard.html -->
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - The Working Man{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-wrapper {
+        background: #ecf0f5;
+        min-height: 100vh;
+    }
+    
+    .admin-header {
+        background: #1a2226;
+        color: white;
+        padding: 15px 0;
+        margin-bottom: 0;
+        position: fixed;
+        top: 50px;
+        left: 0;
+        right: 0;
+        z-index: 999;
+    }
+    
+    .admin-sidebar {
+        position: fixed;
+        top: 112px;
+        left: 0;
+        bottom: 0;
+        width: 250px;
+        background: #222d32;
+        overflow-y: auto;
+        z-index: 998;
+    }
+    
+    .admin-content {
+        margin-left: 250px;
+        margin-top: 112px;
+        padding: 25px;
+        min-height: calc(100vh - 112px);
+    }
+    
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .sidebar-menu .header {
+        color: #4b646f;
+        background: #1a2226;
+        padding: 12px 20px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .sidebar-menu li a {
+        display: block;
+        padding: 12px 20px;
+        color: #b8c7ce;
+        text-decoration: none;
+        border-left: 3px solid transparent;
+        transition: all 0.3s;
+    }
+    
+    .sidebar-menu li a:hover,
+    .sidebar-menu li a.active {
+        color: white;
+        background: #1e282c;
+        border-left-color: #e74c3c;
+    }
+    
+    .sidebar-menu li a i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .sidebar-menu li a .badge {
+        float: right;
+        background: #e74c3c;
+        margin-top: 2px;
+    }
+    
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: transform 0.3s;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+    
+    .stat-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: white;
+        flex-shrink: 0;
+    }
+    
+    .stat-info h3 {
+        margin: 0;
+        font-size: 2em;
+        font-weight: 700;
+    }
+    
+    .stat-info p {
+        margin: 5px 0 0;
+        color: #777;
+        font-size: 13px;
+        text-transform: uppercase;
+    }
+    
+    .bg-red { background: #dd4b39; }
+    .bg-blue { background: #00c0ef; }
+    .bg-green { background: #00a65a; }
+    .bg-yellow { background: #f39c12; }
+    .bg-purple { background: #605ca8; }
+    .bg-orange { background: #ff851b; }
+    
+    .stat-red h3 { color: #dd4b39; }
+    .stat-blue h3 { color: #00c0ef; }
+    .stat-green h3 { color: #00a65a; }
+    .stat-yellow h3 { color: #f39c12; }
+    .stat-purple h3 { color: #605ca8; }
+    .stat-orange h3 { color: #ff851b; }
+    
+    /* Cards */
+    .admin-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+    }
+    
+    .admin-card .card-header {
+        padding: 18px 25px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .admin-card .card-header h3 {
+        margin: 0;
+        font-weight: 700;
+        color: #2c3e50;
+        font-size: 18px;
+    }
+    
+    .admin-card .card-body {
+        padding: 0;
+    }
+    
+    .admin-card .card-footer {
+        padding: 15px 25px;
+        border-top: 1px solid #eee;
+        background: #f9f9f9;
+    }
+    
+    /* Tables */
+    .admin-table {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .admin-table th {
+        background: #f5f5f5;
+        padding: 12px 15px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #555;
+        border-bottom: 2px solid #ddd;
+    }
+    
+    .admin-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+        font-size: 14px;
+    }
+    
+    .admin-table tr:hover {
+        background: #f8f9fa;
+    }
+    
+    .label {
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    
+    .label-success { background: #00a65a; color: white; }
+    .label-warning { background: #f39c12; color: white; }
+    .label-danger { background: #dd4b39; color: white; }
+    .label-info { background: #00c0ef; color: white; }
+    .label-primary { background: #3c8dbc; color: white; }
+    
+    .btn-xs {
+        padding: 3px 8px;
+        font-size: 11px;
+    }
+    
+    .pagination {
+        margin: 0;
+    }
+    
+    .search-box {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .search-box input,
+    .search-box select {
+        padding: 8px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 5px;
+        font-size: 13px;
+    }
+    
+    .search-box .btn {
+        padding: 8px 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .admin-sidebar {
+            transform: translateX(-250px);
+            transition: transform 0.3s;
+        }
+        .admin-sidebar.open {
+            transform: translateX(0);
+        }
+        .admin-content {
+            margin-left: 0;
+        }
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-wrapper">
+    
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="container-fluid">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <button class="btn btn-link visible-xs" onclick="toggleSidebar()" style="color:white;">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <strong style="font-size:18px;"><i class="fa fa-shield"></i> Admin Control Panel</strong>
+                </div>
+                <div style="color:#b8c7ce;">
+                    <i class="fa fa-user-secret"></i> {{ current_user.full_name }} | 
+                    <a href="{{ url_for('index') }}" style="color:#f39c12;">View Site</a> |
+                    <a href="{{ url_for('logout') }}" style="color:#e74c3c;">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <ul class="sidebar-menu">
+            <li class="header">MAIN NAVIGATION</li>
+            <li>
+                <a href="{{ url_for('admin_dashboard') }}" class="active">
+                    <i class="fa fa-dashboard"></i> Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('admin_users') }}">
+                    <i class="fa fa-users"></i> All Members
+                    <span class="badge">{{ total_users }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="#workers">
+                    <i class="fa fa-briefcase"></i> Workers
+                    <span class="badge">{{ total_workers }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="#employers">
+                    <i class="fa fa-building"></i> Employers
+                    <span class="badge">{{ total_employers }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="#jobs">
+                    <i class="fa fa-clipboard"></i> Job Postings
+                    <span class="badge">{{ total_jobs }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="#matches">
+                    <i class="fa fa-handshake-o"></i> Matches
+                    <span class="badge">{{ total_matches }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="#reviews">
+                    <i class="fa fa-star"></i> Reviews
+                    <span class="badge">{{ total_reviews }}</span>
+                </a>
+            </li>
+            <li class="header">MANAGEMENT</li>
+            <li>
+                <a href="{{ url_for('admin_stats') }}">
+                    <i class="fa fa-bar-chart"></i> Statistics
+                </a>
+            </li>
+            <li>
+                <a href="#logs">
+                    <i class="fa fa-history"></i> Activity Logs
+                </a>
+            </li>
+            <li>
+                <a href="#settings">
+                    <i class="fa fa-cog"></i> Settings
+                </a>
+            </li>
+        </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="admin-content">
+        
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card stat-red" onclick="window.location.href='{{ url_for('admin_users') }}'" style="cursor:pointer;">
+                <div class="stat-icon bg-red"><i class="fa fa-users"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_users }}</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+            <div class="stat-card stat-blue" style="cursor:pointer;">
+                <div class="stat-icon bg-blue"><i class="fa fa-briefcase"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_workers }}</h3>
+                    <p>Workers</p>
+                </div>
+            </div>
+            <div class="stat-card stat-green" style="cursor:pointer;">
+                <div class="stat-icon bg-green"><i class="fa fa-building"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_employers }}</h3>
+                    <p>Employers</p>
+                </div>
+            </div>
+            <div class="stat-card stat-yellow" style="cursor:pointer;">
+                <div class="stat-icon bg-yellow"><i class="fa fa-clipboard"></i></div>
+                <div class="stat-info">
+                    <h3>{{ active_jobs }}</h3>
+                    <p>Active Jobs</p>
+                </div>
+            </div>
+            <div class="stat-card stat-purple" style="cursor:pointer;">
+                <div class="stat-icon bg-purple"><i class="fa fa-handshake-o"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_matches }}</h3>
+                    <p>Total Matches</p>
+                </div>
+            </div>
+            <div class="stat-card stat-orange" style="cursor:pointer;">
+                <div class="stat-icon bg-orange"><i class="fa fa-check-circle"></i></div>
+                <div class="stat-info">
+                    <h3>{{ completed_jobs }}</h3>
+                    <p>Completed Jobs</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="row" style="margin-bottom:30px;">
+            <div class="col-md-3 col-sm-6" style="margin-bottom:15px;">
+                <a href="{{ url_for('admin_users') }}" class="btn btn-primary btn-block btn-lg">
+                    <i class="fa fa-users"></i> Manage Users
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6" style="margin-bottom:15px;">
+                <a href="{{ url_for('admin_stats') }}" class="btn btn-info btn-block btn-lg">
+                    <i class="fa fa-bar-chart"></i> View Statistics
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6" style="margin-bottom:15px;">
+                <a href="/seed-data" class="btn btn-warning btn-block btn-lg">
+                    <i class="fa fa-database"></i> Seed Demo Data
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6" style="margin-bottom:15px;">
+                <a href="{{ url_for('index') }}" class="btn btn-success btn-block btn-lg">
+                    <i class="fa fa-eye"></i> View Website
+                </a>
+            </div>
+        </div>
+        
+        <!-- Recent Registered Members -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h3><i class="fa fa-users"></i> Recently Registered Members</h3>
+                <div class="search-box">
+                    <form method="GET" action="{{ url_for('admin_dashboard') }}" style="display:flex; gap:10px;">
+                        <select name="role" style="padding:8px 15px; border:2px solid #e0e0e0; border-radius:5px;">
+                            <option value="all" {% if role_filter == 'all' %}selected{% endif %}>All Roles</option>
+                            <option value="worker" {% if role_filter == 'worker' %}selected{% endif %}>Workers Only</option>
+                            <option value="employer" {% if role_filter == 'employer' %}selected{% endif %}>Employers Only</option>
+                        </select>
+                        <input type="text" name="q" placeholder="Search..." value="{{ search_query }}" style="padding:8px 15px; border:2px solid #e0e0e0; border-radius:5px; width:200px;">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body" style="overflow-x:auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Details</th>
+                            <th>Status</th>
+                            <th>Registered</th>
+                            <th>Last Login</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if users and users.items %}
+                            {% for user in users.items %}
+                            <tr>
+                                <td><strong>#{{ user.id }}</strong></td>
+                                <td>{{ user.full_name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.phone }}</td>
+                                <td>
+                                    <span class="label label-{{ 'success' if user.role == 'worker' else 'primary' if user.role == 'employer' else 'danger' }}">
+                                        {{ user.role.title() }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if user.role == 'worker' and user.worker_profile %}
+                                        {{ user.worker_profile.service_type.replace('_', ' ').title() }}
+                                    {% elif user.role == 'employer' and user.employer_profile %}
+                                        {{ user.employer_profile.company_name or 'Individual' }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="label label-{{ 'success' if user.is_active else 'danger' }}">
+                                        {{ 'Active' if user.is_active else 'Inactive' }}
+                                    </span>
+                                    {% if user.is_verified %}
+                                    <span class="label label-info">Verified</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.created_at.strftime('%b %d, %Y') if user.created_at else 'N/A' }}</td>
+                                <td>{{ user.last_login.strftime('%b %d, %Y') if user.last_login else 'Never' }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin_view_user', user_id=user.id) }}" class="btn btn-info btn-xs">
+                                        <i class="fa fa-eye"></i> View
+                                    </a>
+                                    {% if user.role == 'worker' and user.worker_profile and not user.worker_profile.id_verified %}
+                                    <a href="{{ url_for('admin_verify_user', user_id=user.id) }}" class="btn btn-success btn-xs">
+                                        <i class="fa fa-check"></i> Verify
+                                    </a>
+                                    {% endif %}
+                                    <a href="{{ url_for('admin_toggle_user_status', user_id=user.id) }}" class="btn btn-warning btn-xs">
+                                        <i class="fa fa-{{ 'ban' if user.is_active else 'check' }}"></i>
+                                        {{ 'Deactivate' if user.is_active else 'Activate' }}
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="10" class="text-center" style="padding:40px;">
+                                    <i class="fa fa-users" style="font-size:3em; color:#ddd;"></i>
+                                    <h4>No members registered yet</h4>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            {% if users and users.pages > 1 %}
+            <div class="card-footer">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <small class="text-muted">Showing {{ users.items|length }} of {{ users.total }} members</small>
+                    <ul class="pagination pagination-sm" style="margin:0;">
+                        {% if users.has_prev %}
+                        <li><a href="{{ url_for('admin_dashboard', page=users.prev_num, role=role_filter, q=search_query) }}">&laquo;</a></li>
+                        {% endif %}
+                        {% for page_num in users.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                            {% if page_num %}
+                            <li class="{{ 'active' if page_num == users.page else '' }}">
+                                <a href="{{ url_for('admin_dashboard', page=page_num, role=role_filter, q=search_query) }}">{{ page_num }}</a>
+                            </li>
+                            {% else %}
+                            <li><span>...</span></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if users.has_next %}
+                        <li><a href="{{ url_for('admin_dashboard', page=users.next_num, role=role_filter, q=search_query) }}">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+    </div>
+</div>
+
+<script>
+function toggleSidebar() {
+    document.getElementById('adminSidebar').classList.toggle('open');
+}
+</script>
+{% endblock %}

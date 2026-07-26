@@ -1,0 +1,93 @@
+<!-- templates/job/my_jobs.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Jobs - The Working Man</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { font-family: 'Source Sans Pro', sans-serif; background: #ecf0f5; padding-top: 70px; }
+        .navbar { background: #3c8dbc; border: none; }
+        .navbar-brand { color: white !important; font-weight: bold; }
+        .navbar-nav > li > a { color: white !important; }
+        .box { background: white; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/employer/dashboard"><i class="fa fa-hard-hat"></i> THE WORKING MAN</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/job/create"><i class="fa fa-plus"></i> Post New Job</a></li>
+            <li><a href="/employer/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2><i class="fa fa-list"></i> My Job Posts</h2>
+        <a href="/job/create" class="btn btn-primary"><i class="fa fa-plus"></i> Post New Job</a>
+    </div>
+    <hr>
+
+    {% if jobs %}
+    <div class="box">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Service</th>
+                        <th>Location</th>
+                        <th>Rate</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for job in jobs %}
+                <tr>
+                    <td>{{ job.title[:30] }}...</td>
+                    <td>{{ job.service_type_needed.replace('_', ' ').title() }}</td>
+                    <td>{{ job.location_name }}</td>
+                    <td>${{ "%.2f"|format(job.offered_pay_rate) }}/{{ job.pay_period }}</td>
+                    <td>
+                        <span class="label label-{{ 'success' if job.is_active else 'default' }}">
+                            {{ 'Active' if job.is_active else 'Closed' }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/job/{{ job.id }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> View</a>
+                        {% if job.is_active %}
+                        <a href="/job/{{ job.id }}/close" class="btn btn-xs btn-warning" onclick="return confirm('Close this job?')">Close</a>
+                        {% else %}
+                        <a href="/job/{{ job.id }}/reopen" class="btn btn-xs btn-success">Reopen</a>
+                        {% endif %}
+                        <a href="/job/{{ job.id }}/delete" class="btn btn-xs btn-danger" onclick="return confirm('Delete this job?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa fa-inbox"></i>
+        <h3>No jobs posted yet</h3>
+        <a href="/job/create" class="btn btn-primary">Post Your First Job</a>
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

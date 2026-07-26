@@ -1,0 +1,547 @@
+<!-- templates/index.html - The Working Man Unified Dashboard -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Working Man - Find Trusted Workers</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Source Sans Pro', sans-serif; background: #ecf0f5; }
+        
+        /* Navbar */
+        .navbar { background: #2c3e50; border: none; border-radius: 0; margin: 0; }
+        .navbar-brand { color: #f39c12 !important; font-weight: bold; font-size: 20px; }
+        .navbar-nav > li > a { color: white !important; }
+        .navbar-nav > li > a:hover { background: #34495e !important; }
+        .navbar-nav > li > a.btn-nav { padding: 8px 15px; margin: 6px 3px; border-radius: 5px; font-weight: bold; }
+        .btn-worker { background: #00a65a; color: white !important; }
+        .btn-employer { background: #3c8dbc; color: white !important; }
+        
+        /* Hero */
+        .hero { background: linear-gradient(135deg, #1e3a8a, #3b82f6, #1e40af); color: white; padding: 80px 0 60px; text-align: center; }
+        .hero h1 { font-size: 2.8em; font-weight: 700; }
+        .hero .highlight { color: #fbbf24; }
+        .hero p { font-size: 1.2em; margin: 20px 0; opacity: 0.95; }
+        .hero-btns { margin-top: 30px; }
+        .hero-btns .btn { padding: 15px 35px; font-size: 16px; margin: 8px; border-radius: 8px; font-weight: bold; }
+        .btn-seed { background: #f39c12; color: white !important; border: none; }
+        .btn-seed:hover { background: #e67e22; }
+        
+        /* Stats Bar */
+        .stats-bar { background: white; padding: 25px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .stat-item { text-align: center; }
+        .stat-item h3 { font-size: 2em; font-weight: 700; margin: 0; }
+        .stat-item p { color: #777; margin: 5px 0 0; font-size: 13px; text-transform: uppercase; }
+        .stat-item i { font-size: 1.5em; margin-bottom: 5px; }
+        .stat-workers i, .stat-workers h3 { color: #00a65a; }
+        .stat-employers i, .stat-employers h3 { color: #3c8dbc; }
+        .stat-jobs i, .stat-jobs h3 { color: #f39c12; }
+        .stat-completed i, .stat-completed h3 { color: #00c0ef; }
+        
+        /* Section Headers */
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .section-header h2 { margin: 0; font-weight: 700; color: #2c3e50; }
+        .section-header .btn { font-weight: bold; }
+        
+        /* Tabs */
+        .nav-tabs { border-bottom: 2px solid #ddd; margin-bottom: 20px; }
+        .nav-tabs > li > a { border: none; color: #777; font-weight: 600; padding: 12px 25px; }
+        .nav-tabs > li.active > a { color: #3c8dbc; border-bottom: 3px solid #3c8dbc; background: transparent; }
+        .nav-tabs > li > a:hover { background: transparent; color: #3c8dbc; }
+        
+        /* Cards */
+        .card { background: white; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); margin-bottom: 20px; overflow: hidden; }
+        .card-header { padding: 20px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .card-header h3 { margin: 0; font-weight: 600; }
+        .card-body { padding: 0; }
+        
+        /* Job Cards */
+        .job-list-item { display: flex; align-items: center; padding: 18px 25px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s; }
+        .job-list-item:hover { background: #f8f9fa; }
+        .job-list-item:last-child { border-bottom: none; }
+        .job-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-right: 15px; flex-shrink: 0; background: #f0f8ff; color: #11998e; }
+        .job-info { flex: 1; min-width: 0; }
+        .job-info h4 { margin: 0 0 3px; font-size: 15px; font-weight: 600; }
+        .job-meta { font-size: 12px; color: #999; }
+        .job-meta span { margin-right: 15px; }
+        .job-meta i { margin-right: 3px; }
+        .job-rate { font-weight: bold; color: #00a65a; white-space: nowrap; margin-left: 10px; }
+        
+        /* Worker Cards */
+        .worker-list-item { display: flex; align-items: center; padding: 15px 25px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s; }
+        .worker-list-item:hover { background: #f8f9fa; }
+        .worker-list-item:last-child { border-bottom: none; }
+        .worker-avatar { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-right: 15px; flex-shrink: 0; background: #3c8dbc; color: white; }
+        .worker-info { flex: 1; }
+        .worker-info h4 { margin: 0 0 2px; font-size: 15px; font-weight: 600; }
+        .worker-stars { color: #f39c12; font-size: 12px; }
+        .worker-stars span { color: #999; margin-left: 5px; }
+        .worker-meta { font-size: 12px; color: #777; }
+        
+        /* CTA Section */
+        .cta-section { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 60px 0; text-align: center; margin-top: 40px; }
+        .cta-section h2 { font-size: 2em; margin-bottom: 10px; }
+        .cta-section .btn { margin: 10px; padding: 14px 30px; font-size: 16px; font-weight: bold; }
+        
+        /* Footer */
+        .footer { background: #2c3e50; color: #bdc3c7; padding: 30px 0; text-align: center; }
+        .footer a { color: #f39c12; }
+        
+        .loading { text-align: center; padding: 40px; }
+        .loading i { font-size: 2em; color: #3c8dbc; }
+        
+        .empty-state { text-align: center; padding: 40px; color: #999; }
+        .empty-state i { font-size: 3em; margin-bottom: 10px; }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8em; }
+            .hero-btns .btn { display: block; width: 80%; margin: 10px auto; }
+            .stat-item { margin-bottom: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navMenu">
+                <span class="sr-only">Menu</span><span class="icon-bar" style="background:white;"></span><span class="icon-bar" style="background:white;"></span><span class="icon-bar" style="background:white;"></span>
+            </button>
+            <a class="navbar-brand" href="/"><i class="fa fa-hard-hat"></i> THE WORKING MAN</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="nav navbar-nav">
+                <li><a href="/">Home</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="/job/browse">Browse Jobs</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                    <li><a href="/dashboard"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+                    <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+                {% else %}
+                    <li><a href="/login"><i class="fa fa-sign-in"></i> Login</a></li>
+                    <li><a href="/register/worker" class="btn-nav btn-worker"><i class="fa fa-briefcase"></i> Join as Worker</a></li>
+                    <li><a href="/register/employer" class="btn-nav btn-employer"><i class="fa fa-user-tie"></i> Hire Workers</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- FLASH MESSAGES -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div style="position:fixed;top:70px;right:20px;z-index:9999;max-width:400px;">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible" style="border-radius:5px;box-shadow:0 5px 20px rgba(0,0,0,0.2);">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <h1>Find <span class="highlight">Trusted Workers</span> for Any Job</h1>
+        <p>Connect with verified plumbers, cleaners, electricians, house helps & more</p>
+        <div class="hero-btns">
+            {% if not current_user.is_authenticated %}
+                <a href="/register/worker" class="btn btn-success"><i class="fa fa-briefcase"></i> Join as Worker</a>
+                <a href="/register/employer" class="btn btn-primary"><i class="fa fa-user-tie"></i> Hire Workers</a>
+            {% endif %}
+            <a href="#main-content" class="btn btn-seed"><i class="fa fa-arrow-down"></i> Browse Now</a>
+        </div>
+    </div>
+</section>
+
+<!-- STATS BAR -->
+<section class="stats-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-6 col-sm-3 stat-item stat-workers">
+                <i class="fa fa-users"></i>
+                <h3 id="statWorkers">-</h3>
+                <p>Available Workers</p>
+            </div>
+            <div class="col-xs-6 col-sm-3 stat-item stat-employers">
+                <i class="fa fa-building"></i>
+                <h3 id="statEmployers">-</h3>
+                <p>Employers</p>
+            </div>
+            <div class="col-xs-6 col-sm-3 stat-item stat-jobs">
+                <i class="fa fa-briefcase"></i>
+                <h3 id="statJobs">-</h3>
+                <p>Active Jobs</p>
+            </div>
+            <div class="col-xs-6 col-sm-3 stat-item stat-completed">
+                <i class="fa fa-check-circle"></i>
+                <h3 id="statCompleted">-</h3>
+                <p>Jobs Completed</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+<!-- ==================== POST JOB MODAL ==================== -->
+<div class="modal fade" id="postJobModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#3c8dbc; color:white; border-radius:5px 5px 0 0;">
+                <button type="button" class="close" data-dismiss="modal" style="color:white;">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-plus-circle"></i> Post a New Job</h4>
+            </div>
+            <div class="modal-body">
+                <form id="postJobForm" onsubmit="submitJob(event)">
+                    <div class="form-group">
+                        <label>Job Title <span style="color:red;">*</span></label>
+                        <input type="text" id="jobTitle" class="form-control" placeholder="e.g., Need a Plumber for Kitchen Repair" required maxlength="100">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Service Needed <span style="color:red;">*</span></label>
+                                <select id="jobService" class="form-control" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="house_help">House Help</option>
+                                    <option value="cleaner">Cleaner</option>
+                                    <option value="plumber">Plumber</option>
+                                    <option value="electrician">Electrician</option>
+                                    <option value="gardener">Gardener</option>
+                                    <option value="painter">Painter</option>
+                                    <option value="carpenter">Carpenter</option>
+                                    <option value="mason">Mason</option>
+                                    <option value="driver">Driver</option>
+                                    <option value="security_guard">Security Guard</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Location <span style="color:red;">*</span></label>
+                                <input type="text" id="jobLocation" class="form-control" placeholder="e.g., Westlands" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Pay Rate ($) <span style="color:red;">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="number" id="jobPay" class="form-control" step="0.01" min="0.01" placeholder="0.00" required>
+                                    <span class="input-group-addon">
+                                        <select id="jobPayPeriod" style="border:none; background:transparent;">
+                                            <option value="hourly">/hr</option>
+                                            <option value="daily">/day</option>
+                                            <option value="weekly">/wk</option>
+                                            <option value="monthly">/mo</option>
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Duration</label>
+                                <select id="jobDuration" class="form-control">
+                                    <option value="one_time">One-time job</option>
+                                    <option value="few_days">A few days</option>
+                                    <option value="one_week">About a week</option>
+                                    <option value="few_weeks">A few weeks</option>
+                                    <option value="long_term">Long-term</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Job Description <span style="color:red;">*</span></label>
+                        <textarea id="jobDescription" class="form-control" rows="4" placeholder="Describe the job requirements, schedule, and any specific skills needed..." required maxlength="2000"></textarea>
+                        <small class="text-muted"><span id="jobDescCount">0</span>/2000</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="$('#postJobForm').submit()">
+                    <i class="fa fa-paper-plane"></i> Post Job
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MESSAGE MODAL ==================== -->
+<div class="modal fade" id="messageModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#00a65a; color:white; border-radius:5px 5px 0 0;">
+                <button type="button" class="close" data-dismiss="modal" style="color:white;">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-envelope"></i> Send Message to <span id="msgReceiverName"></span></h4>
+            </div>
+            <div class="modal-body">
+                <div id="msgHistory" style="max-height:250px; overflow-y:auto; margin-bottom:15px; padding:10px; background:#f9f9f9; border-radius:5px;">
+                    <p class="text-muted text-center">Loading messages...</p>
+                </div>
+                <form id="messageForm" onsubmit="sendMessage(event)">
+                    <input type="hidden" id="msgReceiverId">
+                    <div class="form-group">
+                        <textarea id="msgContent" class="form-control" rows="3" placeholder="Type your message here..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="$('#messageForm').submit()">
+                    <i class="fa fa-paper-plane"></i> Send
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== REVIEW MODAL ==================== -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#f39c12; color:white; border-radius:5px 5px 0 0;">
+                <button type="button" class="close" data-dismiss="modal" style="color:white;">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-star"></i> Rate & Review Worker</h4>
+            </div>
+            <div class="modal-body">
+                <form id="reviewForm" onsubmit="submitReview(event)">
+                    <input type="hidden" id="reviewMatchId">
+                    <div class="text-center" style="margin-bottom:20px;">
+                        <p><strong>Worker:</strong> <span id="reviewWorkerName"></span></p>
+                        <p><strong>Job:</strong> <span id="reviewJobTitle"></span></p>
+                        <div style="font-size:30px; cursor:pointer;" id="starRating">
+                            <i class="fa fa-star-o" data-rating="1" onmouseover="highlightStars(1)" onmouseout="resetStars()" onclick="setRating(1)"></i>
+                            <i class="fa fa-star-o" data-rating="2" onmouseover="highlightStars(2)" onmouseout="resetStars()" onclick="setRating(2)"></i>
+                            <i class="fa fa-star-o" data-rating="3" onmouseover="highlightStars(3)" onmouseout="resetStars()" onclick="setRating(3)"></i>
+                            <i class="fa fa-star-o" data-rating="4" onmouseover="highlightStars(4)" onmouseout="resetStars()" onclick="setRating(4)"></i>
+                            <i class="fa fa-star-o" data-rating="5" onmouseover="highlightStars(5)" onmouseout="resetStars()" onclick="setRating(5)"></i>
+                        </div>
+                        <input type="hidden" id="reviewRating" value="0">
+                        <small id="ratingText" style="color:#f39c12;">Click to rate</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Your Review (Optional)</label>
+                        <textarea id="reviewComment" class="form-control" rows="3" placeholder="Share your experience with this worker..." maxlength="500"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="$('#reviewForm').submit()">
+                    <i class="fa fa-star"></i> Submit Review
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- MAIN CONTENT -->
+<div class="container" id="main-content">
+    
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#jobsTab" role="tab" data-toggle="tab"><i class="fa fa-briefcase"></i> Available Jobs</a>
+        </li>
+        <li role="presentation">
+            <a href="#workersTab" role="tab" data-toggle="tab"><i class="fa fa-users"></i> Available Workers</a>
+        </li>
+    </ul>
+    
+    <div class="tab-content">
+        <!-- Jobs Tab -->
+        <div role="tabpanel" class="tab-pane active" id="jobsTab">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fa fa-briefcase"></i> Latest Job Openings</h3>
+                    <a href="/job/browse" class="btn btn-success btn-sm">View All <i class="fa fa-arrow-right"></i></a>
+                </div>
+                <div class="card-body" id="jobsList">
+                    <div class="loading"><i class="fa fa-spinner fa-spin"></i><p>Loading jobs...</p></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Workers Tab -->
+        <div role="tabpanel" class="tab-pane" id="workersTab">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fa fa-users"></i> Top Rated Workers</h3>
+                    <a href="/services" class="btn btn-success btn-sm">View All <i class="fa fa-arrow-right"></i></a>
+                </div>
+                <div class="card-body" id="workersList">
+                    <div class="loading"><i class="fa fa-spinner fa-spin"></i><p>Loading workers...</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Ready to Get Started?</h2>
+        <p>Join thousands of users finding work or hiring trusted workers every day.</p>
+        {% if not current_user.is_authenticated %}
+            <a href="/register/worker" class="btn btn-success"><i class="fa fa-user-plus"></i> Register as Worker</a>
+            <a href="/register/employer" class="btn btn-primary"><i class="fa fa-building"></i> Register as Employer</a>
+        {% endif %}
+        <a href="/seed-data" class="btn btn-warning" id="seedBtn" style="display:none;"><i class="fa fa-database"></i> Seed Demo Data</a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2024 The Working Man. All rights reserved.</p>
+        <p><a href="/privacy-policy">Privacy Policy</a> | <a href="/terms-of-service">Terms</a> | <a href="/contact">Contact</a></p>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    loadStats();
+    loadJobs();
+    loadWorkers();
+    
+    // Auto-dismiss alerts
+    setTimeout(function() { $('.alert').fadeOut(); }, 5000);
+});
+
+// ==================== LOAD STATS ====================
+function loadStats() {
+    $.ajax({
+        url: '/api/stats',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success && response.stats) {
+                $('#statWorkers').text(response.stats.total_workers || 0);
+                $('#statEmployers').text(response.stats.total_employers || 0);
+                $('#statJobs').text(response.stats.active_jobs || 0);
+                $('#statCompleted').text(response.stats.completed_jobs || 0);
+                
+                // Show seed button if no data
+                if ((response.stats.total_workers || 0) === 0) {
+                    $('#seedBtn').show();
+                }
+            }
+        },
+        error: function() {
+            $('.stat-item h3').text('--');
+        }
+    });
+}
+
+// ==================== LOAD JOBS ====================
+function loadJobs() {
+    $.ajax({
+        url: '/api/jobs?limit=10&sort=newest',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            var container = $('#jobsList');
+            
+            if (response.success && response.jobs && response.jobs.length > 0) {
+                var html = '';
+                response.jobs.forEach(function(job) {
+                    html += `
+                        <div class="job-list-item" onclick="window.location.href='/job/${job.id}'">
+                            <div class="job-icon"><i class="fa fa-briefcase"></i></div>
+                            <div class="job-info">
+                                <h4>${job.title}</h4>
+                                <div class="job-meta">
+                                    <span><i class="fa fa-tag"></i> ${job.service_name || job.service_type_needed.replace('_',' ').replace(/\\b\\w/g,function(l){return l.toUpperCase()})}</span>
+                                    <span><i class="fa fa-map-marker"></i> ${job.location_name}</span>
+                                    <span><i class="fa fa-user"></i> ${job.employer_name || 'Anonymous'}</span>
+                                    <span><i class="fa fa-clock-o"></i> ${job.time_ago || 'Recently'}</span>
+                                </div>
+                            </div>
+                            <div class="job-rate">$${parseFloat(job.offered_pay_rate).toFixed(2)}/${job.pay_period}</div>
+                        </div>
+                    `;
+                });
+                container.html(html);
+            } else {
+                container.html('<div class="empty-state"><i class="fa fa-briefcase"></i><h4>No jobs yet</h4><p>Be the first to post a job!</p><a href="/register/employer" class="btn btn-primary btn-sm">Register as Employer</a></div>');
+            }
+        },
+        error: function() {
+            $('#jobsList').html('<div class="empty-state"><i class="fa fa-exclamation-circle"></i><h4>Unable to load jobs</h4><p>Please try again later.</p></div>');
+        }
+    });
+}
+
+// ==================== LOAD WORKERS ====================
+function loadWorkers() {
+    $.ajax({
+        url: '/api/workers?limit=10&sort=rating',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            var container = $('#workersList');
+            
+            if (response.success && response.workers && response.workers.length > 0) {
+                var html = '';
+                response.workers.forEach(function(w) {
+                    var stars = '';
+                    for (var i = 1; i <= 5; i++) {
+                        stars += '<i class="fa fa-star' + (i <= parseFloat(w.rating_average) ? '' : '-o') + '"></i>';
+                    }
+                    
+                    html += `
+                        <div class="worker-list-item" onclick="window.location.href='/messages/${w.user_id}'">
+                            <div class="worker-avatar">
+                                ${w.selfie_path ? '<img src="/static/uploads/' + w.selfie_path + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">' : '<i class="fa fa-user"></i>'}
+                            </div>
+                            <div class="worker-info">
+                                <h4>${w.full_name} ${w.id_verified ? '<i class="fa fa-check-circle" style="color:#00a65a;"></i>' : ''}</h4>
+                                <div class="worker-stars">${stars} <span>${parseFloat(w.rating_average).toFixed(1)} (${w.total_reviews} reviews)</span></div>
+                                <div class="worker-meta">${w.service_name} · ${w.experience_years} years exp · $${parseFloat(w.expected_pay_rate).toFixed(2)}/${w.pay_period}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.html(html);
+            } else {
+                container.html('<div class="empty-state"><i class="fa fa-users"></i><h4>No workers yet</h4><p>Be the first to register as a worker!</p><a href="/register/worker" class="btn btn-success btn-sm">Register as Worker</a></div>');
+            }
+        },
+        error: function() {
+            $('#workersList').html('<div class="empty-state"><i class="fa fa-exclamation-circle"></i><h4>Unable to load workers</h4><p>Please try again later.</p></div>');
+        }
+    });
+}
+</script>
+
+</body>
+</html>

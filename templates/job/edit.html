@@ -1,0 +1,67 @@
+<!-- templates/job/edit.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Job - The Working Man</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { font-family: 'Source Sans Pro', sans-serif; background: #ecf0f5; padding-top: 70px; }
+        .navbar { background: #3c8dbc; border: none; }
+        .navbar-brand { color: white !important; font-weight: bold; }
+        .form-card { background: white; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 30px; max-width: 700px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/employer/dashboard"><i class="fa fa-hard-hat"></i> THE WORKING MAN</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="form-card">
+        <h2><i class="fa fa-edit"></i> Edit Job</h2>
+        <hr>
+        <form method="POST" action="/job/{{ job.id }}/edit">
+            <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" name="title" class="form-control" value="{{ job.title }}" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" class="form-control" rows="5" required>{{ job.description }}</textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Service Type</label>
+                        <input type="text" name="service_type_needed" class="form-control" value="{{ job.service_type_needed }}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" name="location_name" class="form-control" value="{{ job.location_name }}" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Pay Rate ($)</label>
+                <input type="number" name="offered_pay_rate" class="form-control" value="{{ job.offered_pay_rate }}" step="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save Changes</button>
+            <a href="/job/{{ job.id }}" class="btn btn-default">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

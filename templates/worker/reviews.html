@@ -1,0 +1,90 @@
+<!-- templates/worker/reviews.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reviews - The Working Man</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { font-family: 'Source Sans Pro', sans-serif; background: #ecf0f5; padding-top: 70px; }
+        .navbar { background: #3c8dbc; border: none; }
+        .navbar-brand { color: white !important; font-weight: bold; }
+        .navbar-nav > li > a { color: white !important; }
+        .box { background: white; border-top: 3px solid #3c8dbc; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .box-header { padding: 15px; border-bottom: 1px solid #f4f4f4; }
+        .box-body { padding: 15px; }
+        .review-item { padding: 15px 0; border-bottom: 1px solid #eee; }
+        .review-item:last-child { border-bottom: none; }
+        .stars { color: #f39c12; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+        .empty-state i { font-size: 60px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/worker/dashboard"><i class="fa fa-hard-hat"></i> THE WORKING MAN</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/worker/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h2><i class="fa fa-star"></i> My Reviews</h2>
+            
+            <!-- Rating Summary -->
+            <div class="box text-center" style="padding:30px;">
+                <h1 style="font-size:60px; margin:0;">{{ "%.1f"|format(worker.rating_average) }}</h1>
+                <div class="stars" style="font-size:24px;">
+                    {% for i in range(5) %}
+                    <i class="fa fa-star{{ '' if i < worker.rating_average|round|int else '-o' }}"></i>
+                    {% endfor %}
+                </div>
+                <p class="text-muted">{{ worker.total_reviews }} review(s)</p>
+            </div>
+            
+            <hr>
+
+            {% if reviews %}
+            <div class="box">
+                <div class="box-header"><h3 class="box-title">All Reviews</h3></div>
+                <div class="box-body">
+                    {% for review in reviews %}
+                    <div class="review-item">
+                        <div class="stars">
+                            {% for i in range(5) %}
+                            <i class="fa fa-star{{ '' if i < review.rating else '-o' }}"></i>
+                            {% endfor %}
+                            <small class="text-muted"> - {{ review.created_at.strftime('%B %d, %Y') }}</small>
+                        </div>
+                        {% if review.comment %}
+                        <p style="margin-top:10px;">{{ review.comment }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fa fa-star-o"></i>
+                <h3>No reviews yet</h3>
+                <p>Complete jobs to receive reviews from employers</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

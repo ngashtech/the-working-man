@@ -1,0 +1,518 @@
+<!-- templates/worker/profile.html -->
+{% extends "base.html" %}
+
+{% block title %}My Profile - The Working Man{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        background: #ecf0f5;
+        min-height: 100vh;
+        padding: 30px 0 50px;
+    }
+    
+    /* Profile Header */
+    .profile-header {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6, #1e40af);
+        color: white;
+        padding: 40px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 30px;
+        position: relative;
+        box-shadow: 0 10px 40px rgba(30, 58, 138, 0.3);
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        border: 5px solid rgba(255,255,255,0.3);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.2);
+        font-size: 50px;
+    }
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .profile-name {
+        font-size: 2em;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    .profile-service {
+        font-size: 1.1em;
+        opacity: 0.9;
+        margin-bottom: 10px;
+    }
+    .profile-rating {
+        font-size: 18px;
+    }
+    .profile-rating i {
+        color: #fbbf24;
+    }
+    .profile-rating span {
+        margin-left: 5px;
+        opacity: 0.8;
+    }
+    
+    .verified-badge-large {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #00a65a;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .verified-badge-large i {
+        margin-right: 5px;
+    }
+    
+    /* Cards */
+    .profile-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        padding: 20px 25px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .card-header h3 {
+        margin: 0;
+        font-weight: 700;
+        color: #2c3e50;
+        font-size: 18px;
+    }
+    .card-header h3 i {
+        margin-right: 10px;
+        color: #3c8dbc;
+    }
+    .card-body {
+        padding: 25px;
+    }
+    
+    /* Info Table */
+    .info-table {
+        width: 100%;
+    }
+    .info-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 14px;
+    }
+    .info-table td:first-child {
+        font-weight: 600;
+        color: #555;
+        width: 40%;
+    }
+    .info-table td:last-child {
+        color: #333;
+    }
+    .info-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Status Badges */
+    .status-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .status-available { background: #d4edda; color: #155724; }
+    .status-unavailable { background: #f8d7da; color: #721c24; }
+    .status-verified { background: #d4edda; color: #155724; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    
+    /* Stats Row */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .stat-item {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .stat-item i {
+        font-size: 2em;
+        margin-bottom: 8px;
+    }
+    .stat-item h3 {
+        font-size: 1.8em;
+        font-weight: 700;
+        margin: 5px 0;
+    }
+    .stat-item p {
+        color: #777;
+        margin: 0;
+        font-size: 13px;
+        text-transform: uppercase;
+    }
+    .stat-jobs i, .stat-jobs h3 { color: #00c0ef; }
+    .stat-rating i, .stat-rating h3 { color: #00a65a; }
+    .stat-reviews i, .stat-reviews h3 { color: #f39c12; }
+    .stat-experience i, .stat-experience h3 { color: #605ca8; }
+    
+    /* Location Tags */
+    .location-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .location-tag {
+        background: #f0f8ff;
+        color: #3c8dbc;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+    .location-tag i {
+        margin-right: 5px;
+    }
+    
+    /* Reviews */
+    .review-item {
+        padding: 20px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .review-item:last-child {
+        border-bottom: none;
+    }
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    .review-stars {
+        color: #f39c12;
+    }
+    .review-date {
+        color: #999;
+        font-size: 12px;
+    }
+    .review-comment {
+        color: #555;
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    
+    /* Buttons */
+    .btn-edit {
+        background: #3c8dbc;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .btn-edit:hover {
+        background: #367fa9;
+        transform: translateY(-1px);
+    }
+    
+    .btn-toggle {
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+    }
+    .empty-state i {
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+    
+    @media (max-width: 768px) {
+        .profile-header {
+            padding: 25px;
+        }
+        .profile-name {
+            font-size: 1.5em;
+        }
+        .stats-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="profile-container">
+    <div class="container">
+        
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-item stat-jobs">
+                <i class="fa fa-check-circle"></i>
+                <h3>{{ worker.completed_jobs }}</h3>
+                <p>Jobs Done</p>
+            </div>
+            <div class="stat-item stat-rating">
+                <i class="fa fa-star"></i>
+                <h3>{{ "%.1f"|format(worker.rating_average) }}</h3>
+                <p>Rating</p>
+            </div>
+            <div class="stat-item stat-reviews">
+                <i class="fa fa-comments"></i>
+                <h3>{{ worker.total_reviews }}</h3>
+                <p>Reviews</p>
+            </div>
+            <div class="stat-item stat-experience">
+                <i class="fa fa-briefcase"></i>
+                <h3>{{ worker.experience_years }}</h3>
+                <p>Years Exp</p>
+            </div>
+        </div>
+        
+        <!-- Profile Header -->
+        <div class="profile-header">
+            {% if worker.id_verified %}
+            <div class="verified-badge-large">
+                <i class="fa fa-check-circle"></i> Verified Worker
+            </div>
+            {% endif %}
+            
+            <div class="profile-avatar">
+                {% if worker.selfie_path %}
+                <img src="{{ url_for('static', filename='uploads/' + worker.selfie_path) }}" alt="Profile Photo">
+                {% else %}
+                <i class="fa fa-user"></i>
+                {% endif %}
+            </div>
+            
+            <h1 class="profile-name">{{ user.full_name }}</h1>
+            <p class="profile-service">
+                <i class="fa fa-briefcase"></i> {{ worker.service_type.replace('_', ' ').title() }}
+            </p>
+            <div class="profile-rating">
+                {% for i in range(5) %}
+                    {% if i < worker.rating_average|round|int %}
+                    <i class="fa fa-star"></i>
+                    {% elif (worker.rating_average - i) > 0 and (worker.rating_average - i) < 1 %}
+                    <i class="fa fa-star-half-o"></i>
+                    {% else %}
+                    <i class="fa fa-star-o"></i>
+                    {% endif %}
+                {% endfor %}
+                <span>{{ "%.1f"|format(worker.rating_average) }} ({{ worker.total_reviews }} reviews)</span>
+            </div>
+            
+            <div style="margin-top:20px;">
+                <a href="{{ url_for('edit_worker_profile') }}" class="btn-edit">
+                    <i class="fa fa-edit"></i> Edit Profile
+                </a>
+                <form action="{{ url_for('toggle_availability') }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn-toggle" style="background: {{ '#e74c3c' if worker.availability_status == 'available' else '#00a65a' }}
+                        <i class="fa fa-power-off"></i> 
+                        {{ 'Set Unavailable' if worker.availability_status == 'available' else 'Set Available' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                
+                <!-- Personal Information -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3><i class="fa fa-user"></i> Personal Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="info-table">
+                            <tr>
+                                <td><i class="fa fa-user-circle"></i> Full Name</td>
+                                <td>{{ user.full_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-envelope"></i> Email</td>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-phone"></i> Phone</td>
+                                <td>{{ user.phone }}</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-calendar"></i> Member Since</td>
+                                <td>{{ worker.created_at.strftime('%B %d, %Y') if worker.created_at else 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-clock-o"></i> Last Updated</td>
+                                <td>{{ worker.updated_at.strftime('%B %d, %Y') if worker.updated_at else 'N/A' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Service Details -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3><i class="fa fa-briefcase"></i> Service Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="info-table">
+                            <tr>
+                                <td><i class="fa fa-tag"></i> Service Type</td>
+                                <td><strong>{{ worker.service_type.replace('_', ' ').title() }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-clock-o"></i> Experience</td>
+                                <td>{{ worker.experience_years }} years</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-money"></i> Expected Rate</td>
+                                <td><strong>${{ "%.2f"|format(worker.expected_pay_rate) }} / {{ worker.pay_period }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-circle"></i> Availability</td>
+                                <td>
+                                    <span class="status-badge {{ 'status-available' if worker.availability_status == 'available' else 'status-unavailable' }}">
+                                        {{ worker.availability_status.title() }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-shield"></i> Verification Status</td>
+                                <td>
+                                    <span class="status-badge {{ 'status-verified' if worker.id_verified else 'status-pending' }}">
+                                        {{ 'Verified' if worker.id_verified else 'Pending Verification' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-id-card"></i> ID Type</td>
+                                <td>{{ worker.id_document_type.replace('_', ' ').title() if worker.id_document_type else 'Not provided' }}</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-hashtag"></i> ID Number</td>
+                                <td>{{ worker.id_number or 'Not provided' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Right Column -->
+            <div class="col-md-6">
+                
+                <!-- Work Locations -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3><i class="fa fa-map-marker"></i> Work Locations</h3>
+                    </div>
+                    <div class="card-body">
+                        {% set locations = worker.get_locations_list() %}
+                        {% if locations %}
+                        <div class="location-tags">
+                            {% for location in locations %}
+                            <span class="location-tag">
+                                <i class="fa fa-map-pin"></i> {{ location }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fa fa-map-marker"></i>
+                            <p>No locations set. <a href="{{ url_for('edit_worker_profile') }}">Add locations</a></p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- About Me -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3><i class="fa fa-info-circle"></i> About Me</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if worker.bio %}
+                        <p style="line-height:1.8; color:#555;">{{ worker.bio }}</p>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fa fa-edit"></i>
+                            <p>No bio added yet. <a href="{{ url_for('edit_worker_profile') }}">Add a bio</a> to tell employers about yourself.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Recent Reviews -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h3><i class="fa fa-star"></i> Recent Reviews</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if reviews %}
+                            {% for review in reviews %}
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="review-stars">
+                                        {% for i in range(5) %}
+                                        <i class="fa fa-star{{ '' if i < review.rating else '-o' }}"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <span class="review-date">{{ review.created_at.strftime('%B %d, %Y') if review.created_at else '' }}</span>
+                                </div>
+                                {% if review.comment %}
+                                <p class="review-comment">{{ review.comment }}</p>
+                                {% else %}
+                                <p class="review-comment" style="color:#999;">No comment provided.</p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fa fa-star-o"></i>
+                            <h4>No reviews yet</h4>
+                            <p>Complete jobs to receive reviews from employers.</p>
+                            <a href="{{ url_for('browse_jobs') }}" class="btn btn-primary btn-sm">Find Jobs</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}

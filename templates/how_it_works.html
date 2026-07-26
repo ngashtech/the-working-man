@@ -1,0 +1,558 @@
+<!-- templates/how_it_works.html -->
+{% extends "base.html" %}
+
+{% block title %}How It Works - The Working Man{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section */
+    .how-hero {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6, #1e40af);
+        color: white;
+        padding: 80px 0 60px;
+        text-align: center;
+    }
+    .how-hero h1 {
+        font-size: 3em;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    .how-hero p {
+        font-size: 1.2em;
+        opacity: 0.95;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    /* Step Sections */
+    .step-section {
+        padding: 80px 0;
+        border-bottom: 1px solid #eee;
+    }
+    .step-section:nth-child(even) {
+        background: #f8f9fa;
+    }
+    .step-section:nth-child(odd) {
+        background: white;
+    }
+    
+    .step-number {
+        font-size: 8em;
+        font-weight: 900;
+        color: #e8edf2;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 0;
+    }
+    
+    .step-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .step-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: white;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .icon-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .icon-2 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    .icon-3 { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    .icon-4 { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    
+    .step-content h2 {
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2em;
+    }
+    .step-content p {
+        font-size: 16px;
+        line-height: 1.8;
+        color: #555;
+        margin-bottom: 15px;
+    }
+    
+    .step-list {
+        list-style: none;
+        padding: 0;
+    }
+    .step-list li {
+        padding: 10px 0;
+        font-size: 15px;
+        color: #555;
+    }
+    .step-list li i {
+        color: #00a65a;
+        margin-right: 10px;
+    }
+    
+    .step-image {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 12px;
+        padding: 40px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    }
+    .step-image i {
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+    .step-image h3 {
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    
+    /* Matching Explanation */
+    .matching-section {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+    }
+    .matching-section h2 {
+        text-align: center;
+        font-size: 2.5em;
+        font-weight: 700;
+        margin-bottom: 50px;
+    }
+    
+    .match-card {
+        background: rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        height: 100%;
+        transition: transform 0.3s;
+        backdrop-filter: blur(10px);
+    }
+    .match-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.2);
+    }
+    .match-card i {
+        font-size: 40px;
+        margin-bottom: 15px;
+    }
+    .match-card h4 {
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+    .match-card p {
+        opacity: 0.9;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    
+    /* Example Section */
+    .example-section {
+        padding: 80px 0;
+        background: white;
+    }
+    .example-section h2 {
+        text-align: center;
+        font-size: 2.5em;
+        font-weight: 700;
+        margin-bottom: 50px;
+        color: #2c3e50;
+    }
+    
+    .example-box {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 20px;
+        border-left: 5px solid #3c8dbc;
+    }
+    .example-box h4 {
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    .example-box p {
+        color: #555;
+        margin: 0;
+    }
+    
+    /* CTA */
+    .cta-section {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        text-align: center;
+    }
+    .cta-section h2 {
+        font-size: 2.5em;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    .cta-section .btn {
+        padding: 14px 35px;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 8px;
+        border-radius: 8px;
+    }
+    
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding: 40px 0;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: #3c8dbc;
+        transform: translateX(-50%);
+    }
+    .timeline-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 40px;
+        position: relative;
+    }
+    .timeline-item:nth-child(odd) {
+        flex-direction: row;
+    }
+    .timeline-item:nth-child(even) {
+        flex-direction: row-reverse;
+    }
+    .timeline-content {
+        width: 45%;
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .timeline-dot {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #3c8dbc;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+        box-shadow: 0 0 0 5px rgba(60,141,188,0.3);
+    }
+    .timeline-spacer {
+        width: 45%;
+    }
+    
+    @media (max-width: 768px) {
+        .how-hero h1 { font-size: 2em; }
+        .step-content h2 { font-size: 1.5em; }
+        .matching-section h2, .example-section h2, .cta-section h2 { font-size: 1.8em; }
+        .timeline::before { left: 20px; }
+        .timeline-dot { left: 20px; }
+        .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; }
+        .timeline-content, .timeline-spacer { width: 100%; }
+        .timeline-content { margin-left: 50px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="how-hero">
+    <div class="container">
+        <h1><i class="fa fa-cogs"></i> How The Working Man Works</h1>
+        <p>Connecting workers and employers through smart matching - simple, fast, and reliable.</p>
+    </div>
+</section>
+
+<!-- The Simple Explanation -->
+<section class="step-section">
+    <div class="container">
+        <div class="row" style="display:flex; align-items:center; flex-wrap:wrap;">
+            <div class="col-md-6" style="position:relative;">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-icon icon-1">
+                        <i class="fa fa-user-plus"></i>
+                    </div>
+                    <h2>Create Your Profile</h2>
+                    <p>
+                        The first step is simple - tell us who you are and what you need.
+                    </p>
+                    <ul class="step-list">
+                        <li><i class="fa fa-check-circle"></i> <strong>Workers:</strong> Create a profile with your skills, experience, expected pay rate, and the areas where you can work. Upload your ID and a selfie for verification.</li>
+                        <li><i class="fa fa-check-circle"></i> <strong>Employers:</strong> Register with your name, phone number, and company details (if applicable). It only takes 2 minutes!</li>
+                    </ul>
+                    <p>
+                        <em>💡 Tip: Verified worker profiles get 10 times more job offers!</em>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="step-image" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                    <i class="fa fa-id-card"></i>
+                    <h3>Profile Creation</h3>
+                    <p style="opacity:0.9;">Workers: Showcase your skills<br>Employers: Tell us what you need</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="step-section" style="background:#f8f9fa;">
+    <div class="container">
+        <div class="row" style="display:flex; align-items:center; flex-wrap:wrap;">
+            <div class="col-md-6">
+                <div class="step-image" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                    <i class="fa fa-clipboard-list"></i>
+                    <h3>Post or Find Jobs</h3>
+                    <p style="opacity:0.9;">Employers post what they need<br>Workers browse and apply</p>
+                </div>
+            </div>
+            <div class="col-md-6" style="position:relative;">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-icon icon-2">
+                        <i class="fa fa-clipboard-list"></i>
+                    </div>
+                    <h2>Post or Find Jobs</h2>
+                    <p>
+                        Now the real action begins! Here's how each side works:
+                    </p>
+                    <ul class="step-list">
+                        <li><i class="fa fa-check-circle"></i> <strong>Employers post jobs:</strong> Describe what you need - the type of worker, location, pay rate, and schedule. Your job becomes instantly visible to all matching workers.</li>
+                        <li><i class="fa fa-check-circle"></i> <strong>Workers browse jobs:</strong> See all available jobs in your area. Filter by service type, location, or pay rate. When you find a match, click "Apply" with one button!</li>
+                    </ul>
+                    <p>
+                        <em>💡 Tip: Write a clear, detailed job description to attract the best workers!</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="step-section">
+    <div class="container">
+        <div class="row" style="display:flex; align-items:center; flex-wrap:wrap;">
+            <div class="col-md-6" style="position:relative;">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-icon icon-3">
+                        <i class="fa fa-magic"></i>
+                    </div>
+                    <h2>Smart Matching Happens</h2>
+                    <p>
+                        This is where the magic happens! Our system automatically finds the best matches based on:
+                    </p>
+                    <ul class="step-list">
+                        <li><i class="fa fa-check-circle"></i> <strong>Skills Match:</strong> The worker's service type matches exactly what the employer needs.</li>
+                        <li><i class="fa fa-check-circle"></i> <strong>Location Match:</strong> The worker is available in the employer's area.</li>
+                        <li><i class="fa fa-check-circle"></i> <strong>Budget Match:</strong> The worker's expected rate fits within the employer's budget.</li>
+                        <li><i class="fa fa-check-circle"></i> <strong>Rating Priority:</strong> Higher-rated, verified workers appear at the top.</li>
+                    </ul>
+                    <p>
+                        <em>💡 The system calculates a "match score" for each worker - the higher the score, the better the match!</em>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="step-image" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                    <i class="fa fa-handshake-o"></i>
+                    <h3>Smart Matching</h3>
+                    <p style="opacity:0.9;">Skills + Location + Budget<br>= Perfect Match!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="step-section" style="background:#f8f9fa;">
+    <div class="container">
+        <div class="row" style="display:flex; align-items:center; flex-wrap:wrap;">
+            <div class="col-md-6">
+                <div class="step-image" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                    <i class="fa fa-star"></i>
+                    <h3>Rate & Review</h3>
+                    <p style="opacity:0.9;">Build trust in the community<br>through honest feedback</p>
+                </div>
+            </div>
+            <div class="col-md-6" style="position:relative;">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-icon icon-4">
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <h2>Rate, Review & Build Trust</h2>
+                    <p>
+                        After the job is done, the employer rates the worker. This helps everyone:
+                    </p>
+                    <ul class="step-list">
+                        <li><i class="fa fa-check-circle"></i> Good workers earn higher ratings and get more job offers.</li>
+                        <li><i class="fa fa-check-circle"></i> Employers can see past reviews before hiring.</li>
+                        <li><i class="fa fa-check-circle"></i> The community becomes safer and more trustworthy for everyone.</li>
+                        <li><i class="fa fa-check-circle"></i> Poor performers are naturally filtered out by low ratings.</li>
+                    </ul>
+                    <p>
+                        <em>💡 Workers with 4+ star ratings get 5 times more job invitations!</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How Matching Works in Detail -->
+<section class="matching-section">
+    <div class="container">
+        <h2>How the Smart Matching Works</h2>
+        <p style="text-align:center; margin-bottom:50px; opacity:0.9;">
+            Our system calculates a match score for each worker based on four key factors:
+        </p>
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <div class="match-card">
+                    <i class="fa fa-check-circle" style="color:#2ecc71;"></i>
+                    <h4>40% - Skills Match</h4>
+                    <p>Does the worker's service type exactly match what the employer needs? A plumber can't be matched to an electrician job.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="match-card">
+                    <i class="fa fa-map-marker" style="color:#f39c12;"></i>
+                    <h4>30% - Location Match</h4>
+                    <p>Is the worker available in the employer's area? Workers select their preferred locations when creating their profile.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="match-card">
+                    <i class="fa fa-money" style="color:#e74c3c;"></i>
+                    <h4>20% - Budget Match</h4>
+                    <p>Does the worker's expected pay fit within the employer's budget? Workers with rates within range score higher.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="match-card">
+                    <i class="fa fa-star" style="color:#f1c40f;"></i>
+                    <h4>10% - Rating Bonus</h4>
+                    <p>Higher-rated workers get a bonus. Verified workers get an extra boost. Quality work is rewarded!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Example Walkthrough -->
+<section class="example-section">
+    <div class="container">
+        <h2>A Real Example</h2>
+        <p style="text-align:center; margin-bottom:40px; color:#777; font-size:1.1em;">
+            Let's see how Mary finds a plumber for her kitchen repair
+        </p>
+        
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                
+                <div class="example-box">
+                    <h4><i class="fa fa-user-tie" style="color:#3c8dbc;"></i> Step 1: Mary Posts a Job</h4>
+                    <p>Mary needs a plumber to fix her kitchen sink in Westlands. She posts a job with: Service: Plumber, Location: Westlands, Pay: $15/hour. The job goes live immediately.</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4><i class="fa fa-users" style="color:#00a65a;"></i> Step 2: Workers See the Job</h4>
+                    <p>Three plumbers in Westlands see Mary's job on their dashboard: John (5 years exp, 4.8★, $12/hr), Peter (10 years exp, 4.5★, $18/hr), and James (2 years exp, 3.5★, $10/hr).</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4><i class="fa fa-magic" style="color:#f39c12;"></i> Step 3: Smart Matching Calculates Scores</h4>
+                    <p>John scores 95% (perfect match - right skills, right location, fits budget, great rating). Peter scores 70% (right skills and location but rate is above budget). James scores 60% (fits budget but has low rating and less experience).</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4><i class="fa fa-handshake-o" style="color:#e74c3c;"></i> Step 4: Mary Hires John</h4>
+                    <p>Mary sees the suggestions sorted by match score. She reviews John's profile, sees his 4.8★ rating and positive reviews, and decides to hire him. She contacts him through the platform's messaging system.</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4><i class="fa fa-star" style="color:#f1c40f;"></i> Step 5: Job Complete - Rating Time</h4>
+                    <p>John does an excellent job fixing the sink. Mary gives him a 5★ rating and writes: "John was professional, on time, and did great work!" John's rating goes up, helping him get even more jobs in the future.</p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Summary Timeline -->
+<section style="padding:80px 0; background:#f8f9fa;">
+    <div class="container">
+        <h2 style="text-align:center; font-size:2.5em; font-weight:700; margin-bottom:60px; color:#2c3e50;">The Process in 4 Simple Steps</h2>
+        
+        <div class="row text-center">
+            <div class="col-md-3 col-sm-6" style="margin-bottom:30px;">
+                <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:35px; box-shadow:0 10px 30px rgba(102,126,234,0.4);">
+                    <i class="fa fa-user-plus"></i>
+                </div>
+                <h4 style="font-weight:700;">1. Create Profile</h4>
+                <p style="color:#777;">Workers show skills & experience. Employers describe needs.</p>
+            </div>
+            <div class="col-md-3 col-sm-6" style="margin-bottom:30px;">
+                <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#11998e,#38ef7d); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:35px; box-shadow:0 10px 30px rgba(17,153,142,0.4);">
+                    <i class="fa fa-clipboard-list"></i>
+                </div>
+                <h4 style="font-weight:700;">2. Post or Apply</h4>
+                <p style="color:#777;">Employers post jobs. Workers browse and apply with one click.</p>
+            </div>
+            <div class="col-md-3 col-sm-6" style="margin-bottom:30px;">
+                <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#f39c12,#e67e22); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:35px; box-shadow:0 10px 30px rgba(243,156,18,0.4);">
+                    <i class="fa fa-magic"></i>
+                </div>
+                <h4 style="font-weight:700;">3. Smart Match</h4>
+                <p style="color:#777;">System finds best matches by skills, location, budget & ratings.</p>
+            </div>
+            <div class="col-md-3 col-sm-6" style="margin-bottom:30px;">
+                <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#e74c3c,#c0392b); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:35px; box-shadow:0 10px 30px rgba(231,76,60,0.4);">
+                    <i class="fa fa-star"></i>
+                </div>
+                <h4 style="font-weight:700;">4. Rate & Review</h4>
+                <p style="color:#777;">Rate workers after the job. Build trust in the community.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Ready to Experience Smart Matching?</h2>
+        <p style="margin-bottom:30px; opacity:0.9;">Join hundreds of workers and employers already using The Working Man</p>
+        <a href="{{ url_for('register_worker') }}" class="btn btn-success btn-lg">
+            <i class="fa fa-briefcase"></i> Join as Worker
+        </a>
+        <a href="{{ url_for('register_employer') }}" class="btn btn-primary btn-lg">
+            <i class="fa fa-user-tie"></i> Hire Workers
+        </a>
+        <a href="{{ url_for('browse_jobs') }}" class="btn btn-warning btn-lg">
+            <i class="fa fa-search"></i> Browse Available Jobs
+        </a>
+    </div>
+</section>
+
+{% endblock %}

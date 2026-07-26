@@ -1,0 +1,353 @@
+<!-- templates/base.html - The Working Man Platform (Complete Final Version) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Working Man - Find trusted workers for your home and office">
+    <meta name="keywords" content="house help, plumber, cleaner, electrician, workers, jobs, hire, employment">
+    <meta name="author" content="The Working Man">
+    
+    <title>{% block title %}The Working Man - Find Trusted Workers{% endblock %}</title>
+    
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.css">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-fixed-top" id="mainNav">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <i class="fa fa-hard-hat"></i> THE WORKING MAN
+                </a>
+            </div>
+            
+            <div class="collapse navbar-collapse" id="navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('index') }}"><i class="fa fa-home"></i> Home</a></li>
+                    <li><a href="{{ url_for('how_it_works') }}"><i class="fa fa-cogs"></i> How It Works</a></li>
+                    <li><a href="{{ url_for('services') }}"><i class="fa fa-list"></i> Services</a></li>
+                    <li><a href="{{ url_for('browse_jobs') }}"><i class="fa fa-search"></i> Browse Jobs</a></li>
+                    <li><a href="{{ url_for('about') }}"><i class="fa fa-info-circle"></i> About</a></li>
+                    <li><a href="{{ url_for('contact') }}"><i class="fa fa-envelope"></i> Contact</a></li>
+                </ul>
+                
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                        <!-- Messages Dropdown -->
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                <i class="fa fa-envelope-o"></i>
+                                {% if unread_messages > 0 %}
+                                <span class="badge badge-success">{{ unread_messages }}</span>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header">You have {{ unread_messages }} unread messages</li>
+                                <li>
+                                    {% if current_user.role == 'worker' %}
+                                    <a href="{{ url_for('worker_messages') }}">View all messages</a>
+                                    {% elif current_user.role == 'employer' %}
+                                    <a href="{{ url_for('employer_messages') }}">View all messages</a>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Notifications Dropdown -->
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                <i class="fa fa-bell-o"></i>
+                                {% if unread_notifications > 0 %}
+                                <span class="badge badge-warning">{{ unread_notifications }}</span>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header">You have {{ unread_notifications }} notifications</li>
+                                <li><a href="{{ url_for('notifications') }}">View all notifications</a></li>
+                            </ul>
+                        </li>
+                        
+                        <!-- User Dropdown -->
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                <i class="fa fa-user-circle-o"></i> {{ current_user.full_name }} <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="user-header" style="background:#3c8dbc; color:white; padding:15px; text-align:center;">
+                                    <strong>{{ current_user.full_name }}</strong><br>
+                                    <small>{{ current_user.role.title() }}</small>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('dashboard') }}">
+                                        <i class="fa fa-tachometer"></i> Dashboard
+                                    </a>
+                                </li>
+                                
+                                {% if current_user.role == 'worker' %}
+                                <!-- Worker Menu -->
+                                <li>
+                                    <a href="{{ url_for('worker_profile') }}">
+                                        <i class="fa fa-user"></i> My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('create_worker_profile_full') }}">
+                                        <i class="fa fa-user-plus"></i> Create Full Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('edit_worker_profile') }}">
+                                        <i class="fa fa-edit"></i> Edit Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('worker_jobs') }}">
+                                        <i class="fa fa-briefcase"></i> My Jobs
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('browse_jobs') }}">
+                                        <i class="fa fa-search"></i> Find Jobs
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('worker_messages') }}">
+                                        <i class="fa fa-envelope"></i> Messages
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('worker_reviews') }}">
+                                        <i class="fa fa-star"></i> My Reviews
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('worker_settings') }}">
+                                        <i class="fa fa-cog"></i> Settings
+                                    </a>
+                                </li>
+                                
+                                {% elif current_user.role == 'employer' %}
+                                <!-- Employer Menu -->
+                                <li>
+                                    <a href="{{ url_for('employer_profile') }}">
+                                        <i class="fa fa-user"></i> My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('edit_employer_profile') }}">
+                                        <i class="fa fa-edit"></i> Edit Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('create_job') }}">
+                                        <i class="fa fa-plus-circle"></i> Post New Job
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('my_jobs') }}">
+                                        <i class="fa fa-list"></i> My Job Posts
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('services') }}">
+                                        <i class="fa fa-search"></i> Find Workers
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('employer_messages') }}">
+                                        <i class="fa fa-envelope"></i> Messages
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('employer_settings') }}">
+                                        <i class="fa fa-cog"></i> Settings
+                                    </a>
+                                </li>
+                                
+                                {% elif current_user.role == 'admin' %}
+                                <!-- Admin Menu -->
+                                <li>
+                                    <a href="{{ url_for('admin_dashboard') }}">
+                                        <i class="fa fa-shield"></i> Admin Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('admin_users') }}">
+                                        <i class="fa fa-users"></i> All Members
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('admin_stats') }}">
+                                        <i class="fa fa-bar-chart"></i> Statistics
+                                    </a>
+                                </li>
+                                {% endif %}
+                                
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="{{ url_for('logout') }}" style="color:#dd4b39;">
+                                        <i class="fa fa-sign-out"></i> Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <!-- Guest Menu -->
+                        <li><a href="{{ url_for('login') }}"><i class="fa fa-sign-in"></i> Login</a></li>
+                        <li>
+                            <a href="{{ url_for('register_worker') }}" style="color:#00a65a; font-weight:bold;">
+                                <i class="fa fa-briefcase"></i> Join as Worker
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('register_employer') }}" style="color:#3c8dbc; font-weight:bold;">
+                                <i class="fa fa-user-tie"></i> Hire Workers
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages-container">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade in" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <i class="fa fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' if category in ['error', 'danger'] else 'exclamation-triangle' if category == 'warning' else 'info-circle' }}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h4><i class="fa fa-hard-hat"></i> The Working Man</h4>
+                    <p>Connecting skilled workers with employers. Safe, reliable, and trusted service since 2024.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="#"><i class="fa fa-twitter"></i></a>
+                        <a href="#"><i class="fa fa-instagram"></i></a>
+                        <a href="#"><i class="fa fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <h4>Quick Links</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('index') }}">Home</a></li>
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                        <li><a href="{{ url_for('help_center') }}">Help Center</a></li>
+                        <li><a href="{{ url_for('how_it_works') }}">How It Works</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h4>For Workers</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('register_worker') }}">Create Profile</a></li>
+                        <li><a href="{{ url_for('create_worker_profile_full') }}">Complete Profile</a></li>
+                        <li><a href="{{ url_for('browse_jobs') }}">Find Jobs</a></li>
+                        <li><a href="{{ url_for('how_it_works') }}">How to Get Jobs</a></li>
+                        <li><a href="{{ url_for('safety_tips') }}">Safety Tips</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h4>For Employers</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('register_employer') }}">Post a Job</a></li>
+                        <li><a href="{{ url_for('create_job') }}">Create Job Post</a></li>
+                        <li><a href="{{ url_for('services') }}">Find Workers</a></li>
+                        <li><a href="{{ url_for('how_it_works') }}">How to Hire</a></li>
+                        <li><a href="{{ url_for('pricing') }}">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h4>Legal & Support</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('privacy_policy') }}">Privacy Policy</a></li>
+                        <li><a href="{{ url_for('terms_of_service') }}">Terms of Service</a></li>
+                        <li><a href="{{ url_for('help_center') }}">Help Center</a></li>
+                        <li><a href="{{ url_for('safety_tips') }}">Safety Tips</a></li>
+                        <li><a href="{{ url_for('success_stories') }}">Success Stories</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2024 The Working Man. All rights reserved. | Powered by Flask</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Auto-dismiss flash messages after 5 seconds
+            setTimeout(function() {
+                $('.flash-messages-container .alert').fadeOut('slow', function() {
+                    $(this).remove();
+                });
+            }, 5000);
+            
+            // Add padding to body for fixed navbar
+            $('body').css('padding-top', '70px');
+            
+            // Active nav link highlighting
+            var currentPath = window.location.pathname;
+            $('.navbar-nav a').each(function() {
+                if ($(this).attr('href') === currentPath) {
+                    $(this).parent().addClass('active');
+                }
+            });
+        });
+        
+        // Close flash message on button click
+        $(document).on('click', '.flash-messages-container .close', function() {
+            $(this).closest('.alert').fadeOut('slow', function() {
+                $(this).remove();
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>V 

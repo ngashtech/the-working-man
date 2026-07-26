@@ -1,0 +1,131 @@
+<!-- templates/worker/edit_profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - The Working Man</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { font-family: 'Source Sans Pro', sans-serif; background: #ecf0f5; padding-top: 70px; }
+        .navbar { background: #3c8dbc; border: none; }
+        .navbar-brand { color: white !important; font-weight: bold; }
+        .navbar-nav > li > a { color: white !important; }
+        .form-card { background: white; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 30px; max-width: 800px; margin: 0 auto; }
+        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+        .checkbox-card { padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px; cursor: pointer; }
+        .checkbox-card:hover { border-color: #3c8dbc; }
+        .checkbox-card input { margin-right: 8px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/worker/dashboard"><i class="fa fa-hard-hat"></i> THE WORKING MAN</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/worker/profile"><i class="fa fa-user"></i> View Profile</a></li>
+            <li><a href="/worker/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="form-card">
+        <h2><i class="fa fa-edit"></i> Edit Profile</h2>
+        <hr>
+        
+        <form method="POST" action="/worker/profile/edit" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Service Type</label>
+                        <select name="service_type" class="form-control">
+                            <option value="house_help" {% if worker.service_type == 'house_help' %}selected{% endif %}>House Help</option>
+                            <option value="cleaner" {% if worker.service_type == 'cleaner' %}selected{% endif %}>Cleaner</option>
+                            <option value="plumber" {% if worker.service_type == 'plumber' %}selected{% endif %}>Plumber</option>
+                            <option value="electrician" {% if worker.service_type == 'electrician' %}selected{% endif %}>Electrician</option>
+                            <option value="gardener" {% if worker.service_type == 'gardener' %}selected{% endif %}>Gardener</option>
+                            <option value="painter" {% if worker.service_type == 'painter' %}selected{% endif %}>Painter</option>
+                            <option value="carpenter" {% if worker.service_type == 'carpenter' %}selected{% endif %}>Carpenter</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Years of Experience</label>
+                        <input type="number" name="experience_years" class="form-control" value="{{ worker.experience_years }}" min="0" max="50">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Expected Pay Rate ($)</label>
+                        <input type="number" name="expected_pay_rate" class="form-control" value="{{ worker.expected_pay_rate }}" step="0.01" min="0.01">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Pay Period</label>
+                        <select name="pay_period" class="form-control">
+                            <option value="hourly" {% if worker.pay_period == 'hourly' %}selected{% endif %}>Per Hour</option>
+                            <option value="daily" {% if worker.pay_period == 'daily' %}selected{% endif %}>Per Day</option>
+                            <option value="weekly" {% if worker.pay_period == 'weekly' %}selected{% endif %}>Per Week</option>
+                            <option value="monthly" {% if worker.pay_period == 'monthly' %}selected{% endif %}>Per Month</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Availability Status</label>
+                        <select name="availability_status" class="form-control">
+                            <option value="available" {% if worker.availability_status == 'available' %}selected{% endif %}>Available</option>
+                            <option value="unavailable" {% if worker.availability_status == 'unavailable' %}selected{% endif %}>Unavailable</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>About You (Bio)</label>
+                        <textarea name="bio" class="form-control" rows="4" maxlength="500">{{ worker.bio or '' }}</textarea>
+                        <small class="text-muted">Maximum 500 characters</small>
+                    </div>
+                </div>
+            </div>
+
+            <h4>Work Locations</h4>
+            <div class="checkbox-grid">
+                {% set locations = ['Downtown', 'Westlands', 'Kilimani', 'Karen', 'Eastlands', 'South B', 'South C', 'Parklands', 'Lavington', 'Kileleshwa'] %}
+                {% set worker_locations = worker.get_locations_list() %}
+                {% for location in locations %}
+                <label class="checkbox-card">
+                    <input type="checkbox" name="preferred_locations" value="{{ location }}" {% if location in worker_locations %}checked{% endif %}>
+                    <i class="fa fa-map-pin"></i> {{ location }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <h4>Profile Photo</h4>
+            <div class="form-group">
+                <label>Upload New Selfie</label>
+                <input type="file" name="selfie" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label>Upload New ID Document</label>
+                <input type="file" name="id_document" accept="image/*,.pdf">
+            </div>
+
+            <hr>
+            <button type="submit" class="btn btn-primary btn-lg"><i class="fa fa-save"></i> Save Changes</button>
+            <a href="/worker/profile" class="btn btn-default btn-lg">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

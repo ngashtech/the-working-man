@@ -1,0 +1,4 @@
+mkdir static\uploads\documents
+mkdir static\uploads\selfies
+echo. > static\uploads\documents\.gitkeep
+echo. > static\uploads\selfies\.gitkeep

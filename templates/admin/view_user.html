@@ -1,0 +1,112 @@
+<!-- templates/admin/users.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Members - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body { font-family: 'Source Sans Pro', sans-serif; background: #ecf0f5; padding: 30px; }
+        .box { background: white; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 25px; }
+        .label { padding: 5px 10px; }
+        .pagination { margin: 0; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2><i class="fa fa-users"></i> All Registered Members</h2>
+            <a href="/admin" class="btn btn-default"><i class="fa fa-arrow-left"></i> Back to Dashboard</a>
+        </div>
+        
+        <form method="GET" action="/admin/users" class="form-inline" style="margin-bottom:20px;">
+            <div class="form-group">
+                <select name="role" class="form-control">
+                    <option value="all" {% if role_filter == 'all' %}selected{% endif %}>All Roles</option>
+                    <option value="worker" {% if role_filter == 'worker' %}selected{% endif %}>Workers Only</option>
+                    <option value="employer" {% if role_filter == 'employer' %}selected{% endif %}>Employers Only</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" name="q" class="form-control" placeholder="Search by name, email, phone..." value="{{ search_query }}">
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+        </form>
+        
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th>Details</th>
+                        <th>Status</th>
+                        <th>Registered</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users.items %}
+                    <tr>
+                        <td>#{{ user.id }}</td>
+                        <td><strong>{{ user.full_name }}</strong></td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>
+                            <span class="label label-{{ 'success' if user.role == 'worker' else 'primary' }}">
+                                {{ user.role.title() }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if user.role == 'worker' and user.worker_profile %}
+                                {{ user.worker_profile.service_type.replace('_', ' ').title() }}
+                            {% elif user.role == 'employer' and user.employer_profile %}
+                                {{ user.employer_profile.company_name or 'Individual' }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="label label-{{ 'success' if user.is_active else 'danger' }}">
+                                {{ 'Active' if user.is_active else 'Inactive' }}
+                            </span>
+                        </td>
+                        <td>{{ user.created_at.strftime('%b %d, %Y') }}</td>
+                        <td>
+                            <a href="/admin/user/{{ user.id }}" class="btn btn-xs btn-info">
+                                <i class="fa fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if users.pages > 1 %}
+        <div style="text-align:center;">
+            <ul class="pagination">
+                {% for page_num in users.iter_pages() %}
+                    {% if page_num %}
+                    <li class="{{ 'active' if page_num == users.page else '' }}">
+                        <a href="{{ url_for('admin_users', page=page_num, role=role_filter, q=search_query) }}">{{ page_num }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

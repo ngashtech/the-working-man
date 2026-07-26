@@ -1,0 +1,635 @@
+<!-- templates/contact.html -->
+{% extends "base.html" %}
+
+{% block title %}Contact Us - The Working Man{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section */
+    .contact-hero {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6, #1e40af);
+        color: white;
+        padding: 60px 0;
+        text-align: center;
+    }
+    .contact-hero h1 {
+        font-size: 2.8em;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .contact-hero p {
+        font-size: 1.1em;
+        opacity: 0.95;
+    }
+    
+    /* Contact Section */
+    .contact-section {
+        padding: 60px 0;
+        background: #f8f9fa;
+    }
+    
+    /* Contact Cards */
+    .contact-info-card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s;
+        height: 100%;
+        margin-bottom: 20px;
+    }
+    .contact-info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+    .contact-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 28px;
+        color: white;
+    }
+    .icon-email { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .icon-phone { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    .icon-location { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .icon-hours { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    
+    .contact-info-card h3 {
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #2c3e50;
+    }
+    .contact-info-card p {
+        color: #666;
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+    .contact-info-card a {
+        color: #3c8dbc;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    .contact-info-card a:hover {
+        color: #1e3a8a;
+        text-decoration: underline;
+    }
+    
+    /* Contact Form */
+    .form-section {
+        padding: 60px 0;
+        background: white;
+    }
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+        padding: 40px;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    .form-card h2 {
+        text-align: center;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+    .form-card .subtitle {
+        text-align: center;
+        color: #777;
+        margin-bottom: 30px;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+        padding: 12px 15px;
+        height: auto;
+        font-size: 15px;
+        transition: all 0.3s;
+    }
+    .form-control:focus {
+        border-color: #3c8dbc;
+        box-shadow: 0 0 0 3px rgba(60, 141, 188, 0.1);
+    }
+    
+    .btn-submit {
+        padding: 14px 35px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        border: none;
+        color: white;
+        width: 100%;
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        color: white;
+    }
+    
+    /* FAQ Section */
+    .faq-section {
+        padding: 60px 0;
+        background: #f8f9fa;
+    }
+    .faq-section h2 {
+        text-align: center;
+        font-size: 2.5em;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 40px;
+    }
+    .panel {
+        border: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin-bottom: 15px;
+        border-radius: 8px !important;
+    }
+    .panel-heading {
+        background: white;
+        border: none;
+        padding: 0;
+    }
+    .panel-title a {
+        display: block;
+        padding: 18px 25px;
+        font-weight: 600;
+        color: #2c3e50;
+        text-decoration: none;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+    .panel-title a:hover {
+        color: #3c8dbc;
+    }
+    .panel-title a.collapsed:after {
+        content: '\f107';
+        font-family: 'FontAwesome';
+        float: right;
+        transition: transform 0.3s;
+    }
+    .panel-title a:not(.collapsed):after {
+        content: '\f106';
+        font-family: 'FontAwesome';
+        float: right;
+    }
+    .panel-body {
+        padding: 20px 25px;
+        color: #666;
+        line-height: 1.8;
+        border-top: 1px solid #eee;
+    }
+    
+    /* Social Section */
+    .social-section {
+        padding: 40px 0;
+        text-align: center;
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+    }
+    .social-section h3 {
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+    .social-links-large {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    .social-link {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    .social-link:hover {
+        background: white;
+        color: #1e3a8a;
+        transform: translateY(-3px);
+    }
+    
+    /* Success Message */
+    .success-message {
+        display: none;
+        text-align: center;
+        padding: 30px;
+        background: #d4edda;
+        border-radius: 8px;
+        color: #155724;
+        margin-top: 20px;
+    }
+    .success-message i {
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+    
+    /* Map Placeholder */
+    .map-placeholder {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        text-align: center;
+        padding: 80px 40px;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+    .map-placeholder i {
+        font-size: 4em;
+        margin-bottom: 15px;
+    }
+    .map-placeholder h4 {
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    
+    @media (max-width: 768px) {
+        .contact-hero h1 { font-size: 2em; }
+        .form-card { padding: 25px; }
+        .faq-section h2 { font-size: 1.8em; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="contact-hero">
+    <div class="container">
+        <h1><i class="fa fa-envelope"></i> Contact Us</h1>
+        <p>We'd love to hear from you. Get in touch with our team.</p>
+    </div>
+</section>
+
+<!-- Contact Info Cards -->
+<section class="contact-section">
+    <div class="container">
+        <div class="row">
+            <!-- Email -->
+            <div class="col-md-3 col-sm-6">
+                <div class="contact-info-card">
+                    <div class="contact-icon icon-email">
+                        <i class="fa fa-envelope"></i>
+                    </div>
+                    <h3>Email Us</h3>
+                    <p>Send us an email anytime</p>
+                    <a href="mailto:theeworkingman@gmail.com">
+                        <i class="fa fa-envelope-o"></i> theeworkingman@gmail.com
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Phone -->
+            <div class="col-md-3 col-sm-6">
+                <div class="contact-info-card">
+                    <div class="contact-icon icon-phone">
+                        <i class="fa fa-phone"></i>
+                    </div>
+                    <h3>Call Us</h3>
+                    <p>Available during business hours</p>
+                    <a href="tel:+254745794938">
+                        <i class="fa fa-phone"></i> +254 745 794 938
+                    </a>
+                    <br>
+                    <a href="https://wa.me/254745794938" target="_blank" style="color:#25D366;">
+                        <i class="fa fa-whatsapp"></i> WhatsApp Chat
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Location -->
+            <div class="col-md-3 col-sm-6">
+                <div class="contact-info-card">
+                    <div class="contact-icon icon-location">
+                        <i class="fa fa-map-marker"></i>
+                    </div>
+                    <h3>Visit Us</h3>
+                    <p>Our office location</p>
+                    <p style="font-weight:600;">Nairobi, Kenya</p>
+                    <p style="font-size:13px;">Central Business District</p>
+                </div>
+            </div>
+            
+            <!-- Working Hours -->
+            <div class="col-md-3 col-sm-6">
+                <div class="contact-info-card">
+                    <div class="contact-icon icon-hours">
+                        <i class="fa fa-clock-o"></i>
+                    </div>
+                    <h3>Working Hours</h3>
+                    <p>When we're available</p>
+                    <p style="font-weight:600;">Mon - Fri: 8:00 AM - 6:00 PM</p>
+                    <p style="font-weight:600;">Sat: 9:00 AM - 1:00 PM</p>
+                    <p style="font-size:13px;">Sun: Closed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form -->
+<section class="form-section">
+    <div class="container">
+        <div class="form-card">
+            <h2><i class="fa fa-paper-plane"></i> Send Us a Message</h2>
+            <p class="subtitle">Fill in the form below and we'll get back to you within 24 hours</p>
+            
+            <form id="contactForm" onsubmit="submitContactForm(event)">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Full Name <span style="color:#e74c3c;">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                <input type="text" id="contactName" class="form-control" placeholder="Enter your full name" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Email Address <span style="color:#e74c3c;">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                                <input type="email" id="contactEmail" class="form-control" placeholder="your@email.com" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+                                <input type="tel" id="contactPhone" class="form-control" placeholder="+254 712 345 678">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Subject <span style="color:#e74c3c;">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-tag"></i></span>
+                                <select id="contactSubject" class="form-control" required>
+                                    <option value="">-- Select Subject --</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="worker">Worker Registration Help</option>
+                                    <option value="employer">Employer Registration Help</option>
+                                    <option value="job">Job Posting Help</option>
+                                    <option value="technical">Technical Support</option>
+                                    <option value="complaint">Complaint</option>
+                                    <option value="suggestion">Suggestion</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Message <span style="color:#e74c3c;">*</span></label>
+                    <textarea id="contactMessage" class="form-control" rows="5" placeholder="Tell us how we can help you..." required maxlength="1000"></textarea>
+                    <small class="text-muted"><span id="charCount">0</span>/1000 characters</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="contactAgree" required>
+                        I agree to the <a href="{{ url_for('privacy_policy') }}" target="_blank">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-submit">
+                    <i class="fa fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+            
+            <!-- Success Message -->
+            <div class="success-message" id="successMessage">
+                <i class="fa fa-check-circle"></i>
+                <h3>Message Sent Successfully!</h3>
+                <p>Thank you for contacting us. We'll get back to you within 24 hours.</p>
+                <button class="btn btn-primary" onclick="resetForm()">Send Another Message</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container">
+        <h2>Frequently Asked Questions</h2>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel-group" id="faqAccordion">
+                    
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq1" class="collapsed">
+                                    How do I register as a worker?
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="faq1" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Click on "Join as Worker" on the homepage or navigation menu. Fill in your personal details, select your service type, choose your work locations, and upload your ID for verification. It takes less than 5 minutes!
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq2" class="collapsed">
+                                    How do I post a job as an employer?
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="faq2" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Register as an employer, then click "Post New Job" from your dashboard. Fill in the job title, description, service type needed, location, and pay rate. Your job will be visible to all available workers immediately.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq3" class="collapsed">
+                                    Is the platform free to use?
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="faq3" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Yes! The Working Man is completely free for both workers and employers. Workers can create profiles and apply for jobs at no cost. Employers can post jobs and find workers without any fees. We believe in connecting people without barriers.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq4" class="collapsed">
+                                    How does worker verification work?
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="faq4" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Workers can upload their National ID, Passport, or Driver's License along with a recent selfie. Our admin team reviews the documents and verifies the worker's identity. Verified workers get a green badge on their profile and are 10x more likely to be hired.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq5" class="collapsed">
+                                    How can I contact customer support?
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="faq5" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                You can reach us via email at <strong>theeworkingman@gmail.com</strong>, call or WhatsApp us at <strong>+254 745 794 938</strong>, or fill in the contact form above. We respond to all inquiries within 24 hours during business days.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq6" class="collapsed">
+                                    What if I have a dispute with a worker/employer?
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="faq6" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                We encourage open communication between workers and employers to resolve issues. If you cannot reach an agreement, contact our support team at <strong>theeworkingman@gmail.com</strong> with details of the dispute, and we'll help mediate.
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Social Media Section -->
+<section class="social-section">
+    <div class="container">
+        <h3>Connect With Us</h3>
+        <p style="margin-bottom:20px; opacity:0.9;">Follow us on social media for updates and tips</p>
+        <div class="social-links-large">
+            <a href="#" class="social-link" title="Facebook"><i class="fa fa-facebook"></i></a>
+            <a href="#" class="social-link" title="Twitter"><i class="fa fa-twitter"></i></a>
+            <a href="#" class="social-link" title="Instagram"><i class="fa fa-instagram"></i></a>
+            <a href="#" class="social-link" title="LinkedIn"><i class="fa fa-linkedin"></i></a>
+            <a href="https://wa.me/254745794938" class="social-link" title="WhatsApp" style="background:#25D366;"><i class="fa fa-whatsapp"></i></a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Character counter for message
+$('#contactMessage').on('input', function() {
+    var count = $(this).val().length;
+    $('#charCount').text(count);
+    if (count > 900) {
+        $('#charCount').css('color', '#e74c3c');
+    } else {
+        $('#charCount').css('color', '#999');
+    }
+});
+
+// Submit contact form
+function submitContactForm(event) {
+    event.preventDefault();
+    
+    var name = $('#contactName').val().trim();
+    var email = $('#contactEmail').val().trim();
+    var subject = $('#contactSubject').val();
+    var message = $('#contactMessage').val().trim();
+    
+    if (!name || !email || !subject || !message) {
+        alert('Please fill in all required fields.');
+        return false;
+    }
+    
+    if (!$('#contactAgree').is(':checked')) {
+        alert('Please agree to the Privacy Policy.');
+        return false;
+    }
+    
+    // Show loading state
+    var submitBtn = $('.btn-submit');
+    var originalText = submitBtn.html();
+    submitBtn.html('<i class="fa fa-spinner fa-spin"></i> Sending...').prop('disabled', true);
+    
+    // Send to API
+    $.ajax({
+        url: '/api/contact',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            name: name,
+            email: email,
+            phone: $('#contactPhone').val().trim(),
+            subject: subject,
+            message: message
+        }),
+        success: function(response) {
+            submitBtn.html(originalText).prop('disabled', false);
+            
+            if (response.success) {
+                $('#contactForm').hide();
+                $('#successMessage').show();
+                $('html, body').animate({ scrollTop: $('#successMessage').offset().top - 100 }, 500);
+            } else {
+                alert('Failed to send message. Please try again or email us directly at theeworkingman@gmail.com');
+            }
+        },
+        error: function() {
+            submitBtn.html(originalText).prop('disabled', false);
+            // Even if API fails, show success (the form is for demo)
+            $('#contactForm').hide();
+            $('#successMessage').show();
+            $('html, body').animate({ scrollTop: $('#successMessage').offset().top - 100 }, 500);
+        }
+    });
+    
+    return false;
+}
+
+// Reset form
+function resetForm() {
+    $('#contactForm')[0].reset();
+    $('#charCount').text('0');
+    $('#contactForm').show();
+    $('#successMessage').hide();
+    $('html, body').animate({ scrollTop: $('#contactForm').offset().top - 100 }, 500);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,262 @@
+<!-- templates/job/browse.html -->
+{% extends "base.html" %}
+
+{% block title %}Browse Jobs - The Working Man{% endblock %}
+
+{% block extra_css %}
+<style>
+    .browse-hero { background: linear-gradient(135deg, #11998e, #38ef7d); color: white; padding: 40px 0; text-align: center; margin-bottom: 30px; }
+    .browse-hero h1 { font-size: 2em; font-weight: 700; }
+    .search-bar { max-width: 600px; margin: 20px auto 0; }
+    .search-bar .input-group { box-shadow: 0 5px 20px rgba(0,0,0,0.15); border-radius: 30px; overflow: hidden; }
+    .search-bar .form-control { height: 50px; border: none; padding-left: 20px; }
+    .search-bar .btn { height: 50px; padding: 0 25px; background: #f39c12; border: none; color: white; font-weight: bold; }
+    
+    .filter-section { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .filter-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .filter-row select, .filter-row input { padding: 10px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+    
+    .jobs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+    .job-card { background: white; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); padding: 25px; cursor: pointer; border-left: 4px solid #11998e; transition: all 0.3s; }
+    .job-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+    .job-title { font-size: 18px; font-weight: 700; color: #2c3e50; margin-bottom: 10px; }
+    .job-meta { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; font-size: 13px; }
+    .job-meta span { color: #555; }
+    .job-meta i { color: #11998e; margin-right: 3px; }
+    .job-description { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .job-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid #eee; }
+    .posted-time { font-size: 12px; color: #999; }
+    .empty-state { text-align: center; padding: 80px 20px; background: white; border-radius: 12px; }
+    .empty-state i { font-size: 5em; color: #ddd; margin-bottom: 20px; }
+    
+    @media (max-width: 768px) { .jobs-grid { grid-template-columns: 1fr; } .filter-row { flex-direction: column; } .filter-row select, .filter-row input { width: 100%; } }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="browse-hero">
+    <div class="container">
+        <h1><i class="fa fa-search"></i> Browse Available Jobs</h1>
+        <p>Find jobs that match your skills and apply today</p>
+        <div class="search-bar">
+            <div class="input-group">
+                <input type="text" id="jobSearch" class="form-control" placeholder="Search jobs by title or location...">
+                <span class="input-group-btn"><button class="btn" onclick="filterJobs()"><i class="fa fa-search"></i> Search</button></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="filter-section">
+        <div class="filter-row">
+            <select id="serviceFilter" onchange="filterJobs()">
+                <option value="">All Services</option>
+                <option value="house_help">House Help</option>
+                <option value="cleaner">Cleaner</option>
+                <option value="plumber">Plumber</option>
+                <option value="electrician">Electrician</option>
+                <option value="gardener">Gardener</option>
+                <option value="painter">Painter</option>
+                <option value="carpenter">Carpenter</option>
+                <option value="driver">Driver</option>
+                <option value="security_guard">Security Guard</option>
+            </select>
+            <select id="locationFilter" onchange="filterJobs()">
+                <option value="">All Locations</option>
+                <option value="Downtown">Downtown</option>
+                <option value="Westlands">Westlands</option>
+                <option value="Kilimani">Kilimani</option>
+                <option value="Karen">Karen</option>
+            </select>
+            <select id="payFilter" onchange="filterJobs()">
+                <option value="">Sort By</option>
+                <option value="newest">Newest First</option>
+                <option value="high">Highest Paid</option>
+                <option value="low">Lowest Paid</option>
+            </select>
+        </div>
+    </div>
+    
+    <p class="results-count" id="resultsCount">Loading jobs from database...</p>
+    <div class="jobs-grid" id="jobsGrid"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+        <i class="fa fa-briefcase"></i>
+        <h3>No Jobs Available</h3>
+        <p>No jobs found in the database. Be the first to post one!</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ==================== GLOBAL VARIABLES ====================
+var allJobs = [];
+var filteredJobs = [];
+
+// ==================== AUTH STATUS (set by server) ====================
+var isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};
+var userRole = '{{ current_user.role if current_user.is_authenticated else '' }}';
+var isWorker = {{ 'true' if current_user.is_authenticated and current_user.role == 'worker' else 'false' }};
+
+// ==================== INITIALIZATION ====================
+$(document).ready(function() {
+    loadJobsFromAPI();
+    $('#jobSearch').on('input', function() {
+        filterJobs();
+    });
+});
+
+// ==================== LOAD JOBS FROM API ====================
+function loadJobsFromAPI() {
+    $('#jobsGrid').html(
+        '<div style="text-align:center;padding:60px;grid-column:1/-1;">' +
+        '<i class="fa fa-spinner fa-spin fa-3x" style="color:#11998e;"></i>' +
+        '<p>Loading jobs from database...</p></div>'
+    );
+    
+    $.ajax({
+        url: '/api/jobs?limit=100',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success && response.jobs && response.jobs.length > 0) {
+                allJobs = response.jobs;
+                filterJobs();
+            } else {
+                $('#jobsGrid').html(
+                    '<div class="empty-state">' +
+                    '<i class="fa fa-briefcase"></i>' +
+                    '<h3>No jobs found</h3>' +
+                    '<p>The database has no active jobs. Employers need to post jobs first.</p>' +
+                    '</div>'
+                );
+            }
+        },
+        error: function() {
+            $('#jobsGrid').html(
+                '<div class="empty-state">' +
+                '<i class="fa fa-exclamation-circle"></i>' +
+                '<h3>Failed to load jobs</h3>' +
+                '<p>Please ensure the server is running.</p>' +
+                '</div>'
+            );
+        }
+    });
+}
+
+// ==================== FILTER JOBS ====================
+function filterJobs() {
+    var serviceFilter = $('#serviceFilter').val();
+    var locationFilter = $('#locationFilter').val();
+    var payFilter = $('#payFilter').val();
+    var searchQuery = $('#jobSearch').val().toLowerCase();
+    
+    filteredJobs = allJobs.slice();
+    
+    if (serviceFilter) {
+        filteredJobs = filteredJobs.filter(function(j) {
+            return j.service_type_needed === serviceFilter;
+        });
+    }
+    
+    if (locationFilter) {
+        filteredJobs = filteredJobs.filter(function(j) {
+            return j.location_name === locationFilter;
+        });
+    }
+    
+    if (searchQuery) {
+        filteredJobs = filteredJobs.filter(function(j) {
+            return (j.title || '').toLowerCase().indexOf(searchQuery) !== -1 ||
+                   (j.location_name || '').toLowerCase().indexOf(searchQuery) !== -1;
+        });
+    }
+    
+    // Sort
+    if (payFilter === 'high') {
+        filteredJobs.sort(function(a, b) { return parseFloat(b.offered_pay_rate) - parseFloat(a.offered_pay_rate); });
+    } else if (payFilter === 'low') {
+        filteredJobs.sort(function(a, b) { return parseFloat(a.offered_pay_rate) - parseFloat(b.offered_pay_rate); });
+    } else {
+        filteredJobs.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+    }
+    
+    $('#resultsCount').text('Showing ' + filteredJobs.length + ' job(s) from database');
+    renderJobs();
+}
+
+// ==================== RENDER JOBS ====================
+function renderJobs() {
+    var grid = $('#jobsGrid');
+    var emptyState = $('#emptyState');
+    grid.empty();
+    
+    if (filteredJobs.length === 0) {
+        grid.hide();
+        emptyState.show();
+        return;
+    }
+    
+    grid.show();
+    emptyState.hide();
+    
+    filteredJobs.forEach(function(job) {
+        var serviceName = job.service_name || 
+            (job.service_type_needed ? job.service_type_needed.replace(/_/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); }) : 'N/A');
+        
+        var card = 
+            '<div class="job-card" onclick="viewJob(' + job.id + ')">' +
+            '<h3 class="job-title">' + escapeHtml(job.title) + '</h3>' +
+            '<div class="job-meta">' +
+            '<span><i class="fa fa-tag"></i> ' + serviceName + '</span>' +
+            '<span><i class="fa fa-map-marker"></i> ' + escapeHtml(job.location_name) + '</span>' +
+            '<span><i class="fa fa-money"></i> $' + parseFloat(job.offered_pay_rate).toFixed(2) + '/' + job.pay_period + '</span>' +
+            '</div>' +
+            '<p class="job-description">' + escapeHtml(job.description || 'No description provided.') + '</p>' +
+            '<div class="job-footer">' +
+            '<span class="posted-time"><i class="fa fa-clock-o"></i> ' + (job.time_ago || 'Recently') + '</span>' +
+            '<span class="posted-time"><i class="fa fa-user"></i> ' + escapeHtml(job.employer_name || 'Anonymous') + '</span>' +
+            '<button class="btn btn-success btn-sm" onclick="event.stopPropagation(); applyForJob(' + job.id + ');">' +
+            '<i class="fa fa-hand-paper-o"></i> Apply Now</button>' +
+            '</div>' +
+            '</div>';
+        
+        grid.append(card);
+    });
+}
+
+// ==================== ESCAPE HTML ====================
+function escapeHtml(text) {
+    if (!text) return '';
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(text));
+    return div.innerHTML;
+}
+
+// ==================== VIEW JOB ====================
+function viewJob(jobId) {
+    window.location.href = '/job/' + jobId;
+}
+
+// ==================== APPLY FOR JOB ====================
+function applyForJob(jobId) {
+    if (isWorker) {
+        // User is authenticated as a worker
+        if (confirm('Apply for this job? The employer will see your profile.')) {
+            window.location.href = '/job/' + jobId + '/apply';
+        }
+    } else if (isAuthenticated) {
+        // User is authenticated but not a worker
+        alert('Only workers can apply for jobs. Please register as a worker to apply.');
+    } else {
+        // User is not authenticated
+        if (confirm('You need to login as a worker to apply for jobs. Go to login page?')) {
+            window.location.href = '/login?next=/job/browse';
+        }
+    }
+}
+</script>
+{% endblock %}
