@@ -2575,6 +2575,10 @@ def seed_data():
 def not_found(e):
     return render_template('errors/404.html'), 404
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
 @app.errorhandler(500)
 def server_error(e):
     db.session.rollback()
